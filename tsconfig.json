@@ -19,7 +19,6 @@
     "noEmit": true,
     "jsx": "react"
   },
-  "include": [
-    "src"
-  ]
+  "include": [ "src", "./public/electron.ts"],
+  "exclude": ["node_modules"]
 }
