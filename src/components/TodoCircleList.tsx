@@ -1,9 +1,9 @@
 import React from 'react';
 import TodoCircle from "./TodoCircle";
-import {useTodoState} from "../context/Todo.context";
+import {useBranchState} from "../context/Todo.context";
 
 function TodoCircleList() {
-  const branches = useTodoState();
+  const branches = useBranchState();
   return (
     <g className="todo-circle">
       {branches.map(branch => (

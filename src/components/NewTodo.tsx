@@ -1,5 +1,4 @@
 import React from 'react';
-import './Tooltip.css'
 
 function NewTodo() {
   return (

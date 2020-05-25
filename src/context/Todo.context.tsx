@@ -1,7 +1,5 @@
 import React, {createContext, Dispatch, useContext, useReducer} from 'react';
 
-let x: number = 3;
-
 export type Todo = {
   x: number;
   parent: number[];
@@ -15,12 +13,25 @@ export type Branch = {
   is_merge: boolean;
 };
 
-type TodoState = Branch[];
+type Style = {
+  left: string;
+  top: string;
+}
+
+export type TodoBranch = {
+  branches: Branch[];
+
+  global_x: number;
+  global_y: number;
+}
+
+type TodoState = TodoBranch;
 
 const TodoStateContext = createContext<TodoState | undefined>(undefined);
 
 type Action =
   | { type: 'CREATE-TODO'; header: string, text: string, branch: number }
+  | { type: 'SHOW-TOOLTIP'; location: number[] }
   | { type: 'REMOVE'; id: number[] };
 
 type TodoDispatch = Dispatch<Action>;
@@ -32,54 +43,58 @@ function todoReducer(state: TodoState, action: Action): TodoState {
   switch (action.type) {
     case 'CREATE-TODO':
       // TODO: 현재 첫 노드는 예외 발생 가능
-      state[action.branch].todo.push({
-        x: x++,
-        parent: [action.branch, state[action.branch].todo.length-1],
+      state.branches[action.branch].todo.push({
+        x: state.global_x++,
+        parent: [action.branch, state.branches[action.branch].todo.length - 1],
         header: action.header,
         text: action.text,
       })
       return state;
     case 'REMOVE':
       // TODO: Branch 첫 노드는 삭제 불가능하게 할지, 브렌치를 지울지?
-      state[action.id[0]].todo.splice(action.id[1], 1);
+      state.branches[action.id[0]].todo.splice(action.id[1], 1);
       return state;
     default:
       throw new Error('Unhandled action');
   }
 }
 
-export function TodoContextProvider({ children }: { children: React.ReactNode }) {
-  const [todo, dispatch] = useReducer(todoReducer, [
-    {
-      todo: [
-        {
-          x: 0,
-          parent: [0, 0],
-          header: "Initial Header",
-          text: "Initial Text",
-        },
-        {
-          x: 1,
-          parent: [0, 0],
-          header: "Second Header",
-          text: "Second Text",
-        }],
-      y: 0,
-      is_merge: false,
-    },
-    {
-      todo: [
-        {
-          x: 2,
-          parent: [0, 0],
-          header: "First Branch",
-          text: "First Branch Text",
-        }
-      ],
-      y: 1,
-      is_merge: false,
-    }
-  ]);
+export function TodoContextProvider({children}: { children: React.ReactNode }) {
+  const [todo, dispatch] = useReducer(todoReducer, {
+    branches: [
+      {
+        todo: [
+          {
+            x: 0,
+            parent: [0, 0],
+            header: "Initial Header",
+            text: "Initial Text",
+          },
+          {
+            x: 1,
+            parent: [0, 0],
+            header: "Second Header",
+            text: "Second Text",
+          }],
+        y: 0,
+        is_merge: false,
+      },
+      {
+        todo: [
+          {
+            x: 2,
+            parent: [0, 0],
+            header: "First Branch",
+            text: "First Branch Text",
+          }
+        ],
+        y: 1,
+        is_merge: false,
+      }
+    ],
+    global_x: 3,
+    global_y: 2,
+  });
 
   return (
     <TodoDispatchContext.Provider value={dispatch}>
@@ -90,10 +105,16 @@ export function TodoContextProvider({ children }: { children: React.ReactNode })
   );
 }
 
-export function useTodoState() {
+export function useTodoBranchState() {
   const state = useContext(TodoStateContext);
-  if (!state) throw new Error('Todo Provider not found');
+  if (!state) throw new Error('Todo Branch Provider not found');
   return state;
+}
+
+export function useBranchState() {
+  const state = useContext(TodoStateContext);
+  if (!state) throw new Error('Branch Provider not found');
+  return state.branches;
 }
 
 export function useTodoDispatch() {
