@@ -1,9 +1,12 @@
 import React from 'react';
+import './Tooltip.css'
 
+interface TooltipInterface {
+  text: string
+}
 function ToolTip() {
   return (
-    <div className="ToolTip">
-
+    <div id="tooltip">
     </div>
   );
 }

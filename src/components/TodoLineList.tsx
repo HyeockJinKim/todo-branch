@@ -1,23 +1,15 @@
 import React from 'react';
 import TodoLine from "./TodoLine";
+import {useTodoState} from "../context/Todo.context";
 
-interface TodoLineInterface {
-  cx: string,
-  cy: string,
-  root: number[],
-}
-
-interface TodoLineListInterface {
-  branch: Array<Array<TodoLineInterface>>
-}
-
-function TodoLineList(props: TodoLineListInterface) {
+function TodoLineList() {
+  const branches = useTodoState();
   return (
     <g className="todo-line">
-      {props.branch.map(branch => (
-        branch.map(todo => (
-          <TodoLine x1={props.branch[todo.root[0]][todo.root[1]].cx} y1={props.branch[todo.root[0]][todo.root[1]].cy}
-                    x2={todo.cx} y2={todo.cy} />
+      {branches.map(branch => (
+        branch.todo.map(todo => (
+          <TodoLine x1={todo.parent[0]} y1={todo.parent[1]}
+                    x2={todo.x} y2={branch.y} />
         ))
       ))}
     </g>

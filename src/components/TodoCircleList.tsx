@@ -1,21 +1,14 @@
 import React from 'react';
 import TodoCircle from "./TodoCircle";
+import {useTodoState} from "../context/Todo.context";
 
-interface TodoCircleInterface {
-  cx: string,
-  cy: string,
-}
-
-interface TodoCircleListInterface {
-  branch: Array<Array<TodoCircleInterface>>
-}
-
-function TodoCircleList(props: TodoCircleListInterface) {
+function TodoCircleList() {
+  const branches = useTodoState();
   return (
     <g className="todo-circle">
-      {props.branch.map(branch => (
-        branch.map(todo => (
-          <TodoCircle cx={todo.cx} cy={todo.cy}/>
+      {branches.map(branch => (
+        branch.todo.map(todo => (
+          <TodoCircle cx={todo.x} cy={branch.y}/>
         ))
       ))}
     </g>
