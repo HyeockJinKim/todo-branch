@@ -1,6 +1,6 @@
 import React from 'react';
 import TodoLine from "./TodoLine";
-import {useBranchState, useTodoBranchState} from "../context/Todo.context";
+import {useTodoBranchState} from "../context/Todo.context";
 
 function TodoLineList() {
   const todoBranch = useTodoBranchState();
@@ -9,8 +9,8 @@ function TodoLineList() {
     <g className="todo-line">
       {todoBranch.branches.map(branch => {
         let lines = branch.todo.map(todo => (
-          <TodoLine x1={todo.parent[0]} y1={todo.parent[1]} is_last={false}
-                    x2={todo.x} y2={branch.y}/>
+          <TodoLine x1={todoBranch.branches[todo.parent[0]].todo[todo.parent[1]].x}
+                    y1={todoBranch.branches[todo.parent[0]].y} is_last={false} x2={todo.x} y2={branch.y}/>
         ));
         if (!branch.is_merge) {
           lines.push(<TodoLine is_last={true}

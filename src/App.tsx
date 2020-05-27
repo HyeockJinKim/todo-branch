@@ -1,6 +1,7 @@
 import React from 'react';
 import './App.css';
 import TodoBranch from "./components/TodoBranch";
+import {TodoContextProvider} from "./context/Todo.context";
 
 function clear_all_tooltip(e: React.MouseEvent) {
   e.preventDefault();
@@ -14,7 +15,9 @@ function App() {
   return (
     <div className="App" onClick={clear_all_tooltip}>
       <header className="App-header">
-        <TodoBranch/>
+        <TodoContextProvider>
+          <TodoBranch/>
+        </TodoContextProvider>
       </header>
     </div>
   );

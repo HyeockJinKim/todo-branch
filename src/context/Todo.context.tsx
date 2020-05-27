@@ -8,15 +8,12 @@ export type Todo = {
 };
 
 export type Branch = {
+  parent: number;
+  name: string;
   y: number;
   todo: Todo[];
   is_merge: boolean;
 };
-
-type Style = {
-  left: string;
-  top: string;
-}
 
 export type TodoBranch = {
   branches: Branch[];
@@ -31,8 +28,8 @@ const TodoStateContext = createContext<TodoState | undefined>(undefined);
 
 type Action =
   | { type: 'CREATE-TODO'; header: string, text: string, branch: number }
-  | { type: 'SHOW-TOOLTIP'; location: number[] }
-  | { type: 'REMOVE'; id: number[] };
+  | { type: 'CREATE-BRANCH'; branch: number }
+  | { type: 'MERGE'; branch: number };
 
 type TodoDispatch = Dispatch<Action>;
 const TodoDispatchContext = createContext<TodoDispatch | undefined>(
@@ -43,17 +40,36 @@ function todoReducer(state: TodoState, action: Action): TodoState {
   switch (action.type) {
     case 'CREATE-TODO':
       // TODO: 현재 첫 노드는 예외 발생 가능
+      if (isNaN(action.branch) || action.branch == null)
+        return state;
       state.branches[action.branch].todo.push({
         x: state.global_x++,
         parent: [action.branch, state.branches[action.branch].todo.length - 1],
         header: action.header,
         text: action.text,
       })
-      return state;
-    case 'REMOVE':
-      // TODO: Branch 첫 노드는 삭제 불가능하게 할지, 브렌치를 지울지?
-      state.branches[action.id[0]].todo.splice(action.id[1], 1);
-      return state;
+      return {...state};
+    case "CREATE-BRANCH":
+      if (isNaN(action.branch) || action.branch == null)
+        return state;
+      state.branches.push({
+        parent: action.branch,
+        name: "Temp",
+        y: state.global_y++,
+        todo: [{
+          x: state.global_x++,
+          parent: [action.branch, state.branches[action.branch].todo.length-1],
+          header: 'First Plan',
+          text: 'Initial State',
+        }],
+        is_merge: false,
+      })
+      return {...state};
+    case 'MERGE':
+      // TODO: Merge 기능 미구현
+      if (isNaN(action.branch) || action.branch == null)
+        return state;
+      return {...state};
     default:
       throw new Error('Unhandled action');
   }
@@ -63,6 +79,8 @@ export function TodoContextProvider({children}: { children: React.ReactNode }) {
   const [todo, dispatch] = useReducer(todoReducer, {
     branches: [
       {
+        parent: 0,
+        name: "Master",
         todo: [
           {
             x: 0,
@@ -80,6 +98,8 @@ export function TodoContextProvider({children}: { children: React.ReactNode }) {
         is_merge: false,
       },
       {
+        parent: 0,
+        name: "Second",
         todo: [
           {
             x: 2,

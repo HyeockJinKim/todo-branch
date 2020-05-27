@@ -1,4 +1,5 @@
-import React from 'react';
+import React, {useEffect} from 'react';
+import ReactTooltip from "react-tooltip";
 
 interface TodoLineInterface {
   x1: number;
@@ -10,20 +11,20 @@ interface TodoLineInterface {
 
 const cursor_css = {cursor: 'pointer'};
 
-function line_click(todo: TodoLineInterface) {
-  console.log(todo)
-}
-
 function TodoLine(props: TodoLineInterface) {
+  useEffect(()=>{
+    ReactTooltip.rebuild();
+  }, [props]);
   if (props.is_last)
     return (
-      <line onClick={e => line_click(props)} style={cursor_css} data-tip={props.y1} data-for={'create_tooltip'} data-event="click focus"
-            x1={props.x1*40+10} y1={props.y1*40+10} x2={props.x2*40+10} y2={props.y2*40+10} stroke="white" strokeWidth="2.5" />
+      <line style={cursor_css} data-tip={props.y1} data-for={'create_tooltip'} data-event="click"
+            x1={props.x1 * 50 + 10} y1={props.y1 * 50 + 10} x2={props.x2 * 50 + 10} y2={props.y2 * 50 + 10}
+            stroke="white" strokeWidth="3"/>
     )
 
   return (
-    <line onClick={e => line_click(props)} style={cursor_css}
-          x1={props.x1*40+10} y1={props.y1*40+10} x2={props.x2*40+10} y2={props.y2*40+10} stroke="white" strokeWidth="2.5" />
+    <line style={cursor_css} x1={props.x1 * 50 + 10} y1={props.y1 * 50 + 10} x2={props.x2 * 50 + 10}
+          y2={props.y2 * 50 + 10} stroke="white" strokeWidth="3"/>
   );
 }
 

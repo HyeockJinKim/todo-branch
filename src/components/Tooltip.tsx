@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactTooltip from "react-tooltip";
-import {useBranchState} from "../context/Todo.context";
+import {useBranchState, useTodoDispatch} from "../context/Todo.context";
 
 function ToolTip() {
   const branches = useBranchState();
@@ -12,9 +12,34 @@ function ToolTip() {
     lineHeight: '25px',
     height: '25px',
     margin: '.3rem auto 0 auto',
-    width: '100px',
+    width: '120px',
     display: 'block',
     borderRadius: '.3rem',
+  };
+  const dispatch = useTodoDispatch();
+  const onNewTodo = (e: React.MouseEvent, num:string) => {
+    e.preventDefault();
+    console.log(num);
+    dispatch({
+      type: "CREATE-TODO",
+      header: "Temp header",
+      text: "Temp text",
+      branch: parseInt(num),
+    })
+  };
+  const onNewBranch = (e: React.MouseEvent, num:string) => {
+    e.preventDefault();
+    dispatch({
+      type: "CREATE-BRANCH",
+      branch: parseInt(num),
+    })
+  };
+  const onMerge = (e: React.MouseEvent, num:string) => {
+    e.preventDefault();
+    dispatch({
+      type: "MERGE",
+      branch: parseInt(num),
+    })
   };
   return (
     <div>
@@ -33,8 +58,9 @@ function ToolTip() {
                     type={'light'} globalEventOff='click' getContent={(data) => (
         <div>
           <h3 style={{margin: '3px auto 3px auto'}}>{data} Branch</h3>
-          <span style={btn_style}>new todo</span>
-          <span style={btn_style}>continue</span>
+          <span style={btn_style} onClick={(e) => onNewTodo(e, data)}>new todo</span>
+          <span style={btn_style} onClick={(e) => onNewBranch(e, data)}>new branch</span>
+          <span style={btn_style} onClick={(e) => onMerge(e, data)}>merge</span>
         </div>
       )}>
       </ReactTooltip>
