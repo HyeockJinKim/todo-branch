@@ -10,7 +10,7 @@ function TodoBranch() {
     <div className="TodoBranch">
       <h2>Todo branch</h2>
       <div style={{overflowX: 'scroll'}}>
-        <svg style={{width: todoBranch.global_x * 50 + 2900, height: todoBranch.global_y * 50 + 50, margin: '2em 10%'}}>
+        <svg style={{width: todoBranch.global_x * 50 + 200, height: todoBranch.branches.length * 50 + 30, margin: '2em 10%'}}>
           <TodoLineList/>
           <TodoCircleList/>
         </svg>

@@ -1,0 +1,30 @@
+
+.btn {
+    cursor: pointer;
+    font-size: 17px;
+    background-color: #7b95cd;
+    color: white;
+    line-height: 25px;
+    height: 25px;
+    margin: .3rem auto 0 auto;
+    width: 120px;
+    display: block;
+    border-radius: .3rem;
+}
+
+h3 {
+    margin: .3rem auto .8rem auto;
+}
+
+label, input {
+    display: block;
+    font-size: 13px;
+    text-align: center;
+    border-radius: .3rem;
+    margin: .4rem auto;
+}
+
+label {
+    font-weight: bold;
+    text-align: left;
+}
