@@ -12,7 +12,7 @@ export type Branch = {
   parent: number;
   name: string;
   todo: Todo[];
-  is_merge: boolean;
+  merge_node: number[];
   y: number;
 };
 
@@ -41,7 +41,7 @@ function todoReducer(state: TodoState, action: Action): TodoState {
     case 'CREATE-TODO':
       console.log(state)
       // TODO: 현재 첫 노드는 예외 발생 가능
-      if (isNaN(action.branch) || action.branch == null)
+      if (isNaN(action.branch) || action.branch == null || state.branches[action.branch].merge_node.length !== 0)
         return state;
       state.branches[action.branch].todo.push({
         x: state.global_x++,
@@ -49,10 +49,10 @@ function todoReducer(state: TodoState, action: Action): TodoState {
         header: action.header,
         text: action.text,
         success: false,
-      })
+      });
       return {...state};
     case "CREATE-BRANCH":
-      if (isNaN(action.branch) || action.branch == null)
+      if (isNaN(action.branch) || action.branch == null || state.branches[action.branch].merge_node.length !== 0)
         return state;
       const target_y = state.branches[action.branch].y;
       state.branches = state.branches.map(branch => {
@@ -70,9 +70,9 @@ function todoReducer(state: TodoState, action: Action): TodoState {
           text: 'Initial State',
           success: false,
         }],
-        is_merge: false,
+        merge_node: [],
         y: target_y + 1,
-      })
+      });
       return {...state};
     case "SUCCESS":
       if (isNaN(action.id[0]) || action.id[0] == null || isNaN(action.id[1]) || action.id[1] == null)
@@ -80,9 +80,18 @@ function todoReducer(state: TodoState, action: Action): TodoState {
       state.branches[action.id[0]].todo[action.id[1]].success = !state.branches[action.id[0]].todo[action.id[1]].success;
       return {...state};
     case 'MERGE':
-      // TODO: Merge 기능 미구현
-      if (isNaN(action.branch) || action.branch == null)
+      if (isNaN(action.branch) || action.branch == null || action.branch === 0 || state.branches[action.branch].merge_node.length !== 0)
         return state;
+      const target_branch = state.branches[action.branch];
+      const parent = target_branch.parent;
+      target_branch.merge_node = [parent, state.branches[parent].todo.length];
+      state.branches[parent].todo.push({
+        x: state.global_x++,
+        parent: [parent, state.branches[parent].todo.length - 1],
+        header: target_branch.name + " Merged!",
+        text: target_branch.name + " Merged!",
+        success: true,
+      });
       return {...state};
     default:
       throw new Error('Unhandled action');
@@ -110,7 +119,7 @@ export function TodoContextProvider({children}: { children: React.ReactNode }) {
             text: "Second Text",
             success: false,
           }],
-        is_merge: false,
+        merge_node: [],
         y: 0,
       },
       {
@@ -125,7 +134,7 @@ export function TodoContextProvider({children}: { children: React.ReactNode }) {
             success: false,
           }
         ],
-        is_merge: false,
+        merge_node: [],
         y: 1,
       }
     ],

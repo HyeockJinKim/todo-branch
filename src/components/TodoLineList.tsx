@@ -18,17 +18,26 @@ function TodoLineList() {
                 y1={line_location(todoBranch.branches[todo.parent[0]].y)} x2={line_location(todo.x)}
                 y2={line_location(branch.y)} stroke="white" strokeWidth="3"/>
         ));
-        if (!branch.is_merge) {
+        if (branch.merge_node.length === 0) {
           lines.push(
             <line style={cursor_css} data-tip={index} data-for={'create_tooltip'} data-event="click"
                   x1={line_location(branch.todo[branch.todo.length - 1].x)} y1={line_location(branch.y)}
                   x2={line_location(todoBranch.global_x)} y2={line_location(branch.y)}
                   stroke="white" strokeWidth="3"/>
           )
+        } else {
+          lines.push(
+            <line style={cursor_css} data-tip={index} data-for={'create_tooltip'} data-event="click"
+                  x1={line_location(branch.todo[branch.todo.length - 1].x)} y1={line_location(branch.y)}
+                  x2={line_location(todoBranch.branches[branch.merge_node[0]].todo[branch.merge_node[1]].x)}
+                  y2={line_location(todoBranch.branches[branch.merge_node[0]].y)}
+                  stroke="white" strokeWidth="3"/>
+          )
         }
         lines.push(
           <text x={line_location(todoBranch.global_x) + 30} y={line_location(branch.y) + 7} fill="white"
-                style={{fontSize: '18px'}}>{branch.name}</text>
+                data-tip={index} data-for={'create_tooltip'} data-event="click"
+                style={{cursor: "pointer", fontSize: "18px"}}>{branch.name}</text>
         )
 
         return lines;
