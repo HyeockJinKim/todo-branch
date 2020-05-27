@@ -8,11 +8,11 @@ function TodoCircleList() {
   const circle_location = (x: number) => x * 50 + 10;
   return (
     <g className="todo-circle">
-      {branches.map((branch, y) => (
+      {branches.map(branch => (
         branch.todo.map((todo, x) => (
-          <circle data-tip='' data-for={'circle_' + y + '_' + todo.x}
-                  onDoubleClick={() => dispatch({type: "SUCCESS", id: [y, x++]})} style={cursor_css}
-                  cx={circle_location(todo.x)} cy={circle_location(y)} r="7" stroke="white" strokeWidth="2.5"
+          <circle data-tip='' data-for={'circle_' + branch.y + '_' + todo.x}
+                  onDoubleClick={() => dispatch({type: "SUCCESS", id: [branch.y, x++]})} style={cursor_css}
+                  cx={circle_location(todo.x)} cy={circle_location(branch.y)} r="7" stroke="white" strokeWidth="2.5"
                   fill={todo.success ? "white" : "#282c34"}>
           </circle>
         ))

@@ -13,6 +13,7 @@ export type Branch = {
   name: string;
   todo: Todo[];
   is_merge: boolean;
+  y: number;
 };
 
 export type TodoBranch = {
@@ -53,7 +54,13 @@ function todoReducer(state: TodoState, action: Action): TodoState {
     case "CREATE-BRANCH":
       if (isNaN(action.branch) || action.branch == null)
         return state;
-      state.branches.splice(action.branch+1, 0, {
+      const target_y = state.branches[action.branch].y;
+      state.branches = state.branches.map(branch => {
+        if (branch.y > target_y)
+          branch.y++;
+        return branch;
+      });
+      state.branches.push({
         parent: action.branch,
         name: action.name,
         todo: [{
@@ -64,6 +71,7 @@ function todoReducer(state: TodoState, action: Action): TodoState {
           success: false,
         }],
         is_merge: false,
+        y: target_y + 1,
       })
       return {...state};
     case "SUCCESS":
@@ -103,6 +111,7 @@ export function TodoContextProvider({children}: { children: React.ReactNode }) {
             success: false,
           }],
         is_merge: false,
+        y: 0,
       },
       {
         parent: 0,
@@ -117,6 +126,7 @@ export function TodoContextProvider({children}: { children: React.ReactNode }) {
           }
         ],
         is_merge: false,
+        y: 1,
       }
     ],
     global_x: 3,

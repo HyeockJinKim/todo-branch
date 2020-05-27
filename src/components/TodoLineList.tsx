@@ -12,22 +12,22 @@ function TodoLineList() {
 
   return (
     <g className="todo-line">
-      {todoBranch.branches.map((branch, y) => {
+      {todoBranch.branches.map((branch, index) => {
         let lines = branch.todo.map(todo => (
           <line style={cursor_css} x1={line_location(todoBranch.branches[todo.parent[0]].todo[todo.parent[1]].x)}
-                y1={line_location(todo.parent[0])} x2={line_location(todo.x)}
-                y2={line_location(y)} stroke="white" strokeWidth="3"/>
+                y1={line_location(todoBranch.branches[todo.parent[0]].y)} x2={line_location(todo.x)}
+                y2={line_location(branch.y)} stroke="white" strokeWidth="3"/>
         ));
         if (!branch.is_merge) {
           lines.push(
-            <line style={cursor_css} data-tip={y} data-for={'create_tooltip'} data-event="click"
-                  x1={line_location(branch.todo[branch.todo.length - 1].x)} y1={line_location(y)}
-                  x2={line_location(todoBranch.global_x)} y2={line_location(y)}
+            <line style={cursor_css} data-tip={index} data-for={'create_tooltip'} data-event="click"
+                  x1={line_location(branch.todo[branch.todo.length - 1].x)} y1={line_location(branch.y)}
+                  x2={line_location(todoBranch.global_x)} y2={line_location(branch.y)}
                   stroke="white" strokeWidth="3"/>
           )
         }
         lines.push(
-          <text x={line_location(todoBranch.global_x) + 30} y={line_location(y) + 7} fill="white"
+          <text x={line_location(todoBranch.global_x) + 30} y={line_location(branch.y) + 7} fill="white"
                 style={{fontSize: '18px'}}>{branch.name}</text>
         )
 
