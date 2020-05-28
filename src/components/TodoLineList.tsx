@@ -36,7 +36,7 @@ function TodoLineList() {
         }
         lines.push(
           <text x={line_location(todoBranch.global_x) + 30} y={line_location(branch.y) + 7} fill="white"
-                data-tip={index} data-for={'create_tooltip'} data-event="click"
+                data-tip={JSON.stringify({index, name: branch.name})} data-for={'create_tooltip'} data-event="click"
                 style={{cursor: "pointer", fontSize: "18px"}}>{branch.name}</text>
         )
 

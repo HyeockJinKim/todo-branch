@@ -4,11 +4,16 @@ import './Tooltip.css'
 import {useBranchState, useTodoDispatch} from "../context/Todo.context";
 
 type ToolTipRef = { tooltipRef: null } | null;
+type Tip = {
+  name: string;
+  index: number;
+}
 
 enum Input {
   None,
   Todo,
   Branch,
+  Edit,
 }
 
 enum CircleTooltip {
@@ -32,7 +37,7 @@ function ToolTip() {
     setText('');
     setInput(Input.None);
   }
-  const onNewTodo = (e: React.MouseEvent, num: string, header: string, text: string) => {
+  const onNewTodo = (e: React.MouseEvent, num: number, header: string, text: string) => {
     e.preventDefault();
     const current: ToolTipRef = branchTooltip.current;
     current!.tooltipRef = null;
@@ -46,7 +51,7 @@ function ToolTip() {
 
     dispatch({
       type: "CREATE-TODO",
-      branch: parseInt(num),
+      branch: num,
       header,
       text,
     })
@@ -62,7 +67,7 @@ function ToolTip() {
     })
     setCircleTooltip(CircleTooltip.Info);
   };
-  const onNewBranch = (e: React.MouseEvent, num: string, name: string) => {
+  const onNewBranch = (e: React.MouseEvent, num: number, name: string) => {
     e.preventDefault();
     const current: ToolTipRef = branchTooltip.current;
     current!.tooltipRef = null;
@@ -72,29 +77,44 @@ function ToolTip() {
     }
     dispatch({
       type: "CREATE-BRANCH",
-      branch: parseInt(num),
+      branch: num,
       name,
     })
   };
-  const onMerge = (e: React.MouseEvent, num: string) => {
+  const onEditBranch = (e: React.MouseEvent, num: number, name: string) => {
+    e.preventDefault();
+    const current: ToolTipRef = branchTooltip.current;
+    current!.tooltipRef = null;
+    ReactTooltip.hide();
+    if (name === '') {
+      name = 'temp branch';
+    }
+    dispatch({
+      type: "EDIT-BRANCH",
+      index: num,
+      name,
+    })
+  };
+  const onMerge = (e: React.MouseEvent, num: number) => {
     e.preventDefault();
     const current: ToolTipRef = branchTooltip.current;
     current!.tooltipRef = null;
     ReactTooltip.hide();
     dispatch({
       type: "MERGE",
-      branch: parseInt(num),
+      branch: num,
     })
   };
-  let todoInputs = (data: string) => (
+  let todoInputs = (data: Tip) => (
     <div>
-      <span className="btn" onClick={(e) => setInput(Input.Todo)}>new todo</span>
-      <span className="btn" onClick={(e) => setInput(Input.Branch)}>new branch</span>
-      <span className="btn" onClick={(e) => onMerge(e, data)}>merge</span>
+      <span className="btn" onClick={() => setInput(Input.Todo)}>new todo</span>
+      <span className="btn" onClick={() => setInput(Input.Branch)}>new branch</span>
+      <span className="btn" onClick={(e) => onMerge(e, data.index)}>merge</span>
+      <span className="btn" onClick={() => setInput(Input.Edit)}>Edit</span>
     </div>
   );
   if (inputs === Input.Todo) {
-    todoInputs = (data: string) => (
+    todoInputs = (data: Tip) => (
       <div>
         <label>
           Header
@@ -104,17 +124,27 @@ function ToolTip() {
           Text
           <input value={text} onChange={e => setText(e.target.value)}/>
         </label>
-        <span className="btn" onClick={(e) => onNewTodo(e, data, header, text)}>new todo</span>
+        <span className="btn" onClick={(e) => onNewTodo(e, data.index, header, text)}>new todo</span>
       </div>
     )
   } else if (inputs === Input.Branch) {
-    todoInputs = (data: string) => (
+    todoInputs = (data: Tip) => (
       <div>
         <label>
           Branch Name
           <input value={header} onChange={e => setHeader(e.target.value)}/>
         </label>
-        <span className="btn" onClick={(e) => onNewBranch(e, data, header)}>new branch</span>
+        <span className="btn" onClick={(e) => onNewBranch(e, data.index, header)}>new branch</span>
+      </div>
+    )
+  } else if (inputs === Input.Edit) {
+    todoInputs = (data: Tip) => (
+      <div>
+        <label>
+          Branch Name
+          <input value={header} onChange={e => setHeader(e.target.value)}/>
+        </label>
+        <span className="btn" onClick={(e) => onEditBranch(e, data.index, header)}>edit branch</span>
       </div>
     )
   }
@@ -137,6 +167,18 @@ function ToolTip() {
       </div>
     );
   }
+  const branchToolTipContent = (data: string) => {
+    if (data === null)
+      return <div/>;
+    let tip = JSON.parse(data);
+    return (
+      <div>
+        <h3>{tip.name} Branch</h3>
+        {todoInputs(tip)}
+      </div>
+    );
+  };
+
   if (circleTooltip === CircleTooltip.Edit) {
     circleInfo = (data: string) => {
       let tip = JSON.parse(data);
@@ -162,17 +204,13 @@ function ToolTip() {
   return (
     <div>
       <ReactTooltip id='todo_tooltip' effect='solid' border={true} place="bottom"
-                    type={'light'} delayHide={300} delayUpdate={300} getContent={(data) => (
+                    type={'light'} delayHide={500} delayUpdate={300} getContent={(data) => (
         circleInfo(data)
       )}>
       </ReactTooltip>
       <ReactTooltip ref={branchTooltip} id='create_tooltip' place='right' effect='solid' clickable={true}
-                    type={'light'} globalEventOff='click' afterHide={resetAll} getContent={(data) => (
-        <div>
-          <h3>{data} Branch</h3>
-          {todoInputs(data)}
-        </div>
-      )}>
+                    type={'light'} globalEventOff='click' afterHide={resetAll}
+                    getContent={(data) => branchToolTipContent(data)}>
       </ReactTooltip>
     </div>
   );
