@@ -37,6 +37,7 @@ function ToolTip() {
     setText('');
     setInput(Input.None);
   }
+
   const onNewTodo = (e: React.MouseEvent, num: number, header: string, text: string) => {
     e.preventDefault();
     const current: ToolTipRef = branchTooltip.current;
@@ -105,49 +106,60 @@ function ToolTip() {
       branch: num,
     })
   };
-  let todoInputs = (data: Tip) => (
-    <div>
-      <span className="btn" onClick={() => setInput(Input.Todo)}>new todo</span>
-      <span className="btn" onClick={() => setInput(Input.Branch)}>new branch</span>
-      <span className="btn" onClick={(e) => onMerge(e, data.index)}>merge</span>
-      <span className="btn" onClick={() => setInput(Input.Edit)}>Edit</span>
-    </div>
-  );
-  if (inputs === Input.Todo) {
-    todoInputs = (data: Tip) => (
-      <div>
-        <label>
-          Header
-          <input value={header} onChange={e => setHeader(e.target.value)}/>
-        </label>
-        <label>
-          Text
-          <input value={text} onChange={e => setText(e.target.value)}/>
-        </label>
-        <span className="btn" onClick={(e) => onNewTodo(e, data.index, header, text)}>new todo</span>
-      </div>
-    )
-  } else if (inputs === Input.Branch) {
-    todoInputs = (data: Tip) => (
-      <div>
-        <label>
-          Branch Name
-          <input value={header} onChange={e => setHeader(e.target.value)}/>
-        </label>
-        <span className="btn" onClick={(e) => onNewBranch(e, data.index, header)}>new branch</span>
-      </div>
-    )
-  } else if (inputs === Input.Edit) {
-    todoInputs = (data: Tip) => (
-      <div>
-        <label>
-          Branch Name
-          <input value={header} onChange={e => setHeader(e.target.value)}/>
-        </label>
-        <span className="btn" onClick={(e) => onEditBranch(e, data.index, header)}>edit branch</span>
-      </div>
-    )
+
+  let todoInputs: (data: Tip) => JSX.Element;
+  switch (inputs) {
+    case Input.None:
+      todoInputs = (data: Tip) => (
+        <div>
+          <span className="btn" onClick={() => setInput(Input.Todo)}>new todo</span>
+          <span className="btn" onClick={() => setInput(Input.Branch)}>new branch</span>
+          <span className="btn" onClick={(e) => onMerge(e, data.index)}>merge</span>
+          <span className="btn" onClick={() => setInput(Input.Edit)}>Edit</span>
+        </div>
+      );
+      break;
+    case Input.Todo:
+      todoInputs = (data: Tip) => (
+        <div>
+          <label>
+            Header
+            <input value={header} onChange={e => setHeader(e.target.value)}/>
+          </label>
+          <label>
+            Text
+            <input value={text} onChange={e => setText(e.target.value)}/>
+          </label>
+          <span className="btn" onClick={(e) => onNewTodo(e, data.index, header, text)}>new todo</span>
+        </div>
+      )
+      break;
+    case Input.Branch:
+      todoInputs = (data: Tip) => (
+        <div>
+          <label>
+            Branch Name
+            <input value={header} onChange={e => setHeader(e.target.value)}/>
+          </label>
+          <span className="btn" onClick={(e) => onNewBranch(e, data.index, header)}>new branch</span>
+        </div>
+      )
+      break;
+    case Input.Edit:
+      todoInputs = (data: Tip) => (
+        <div>
+          <label>
+            Branch Name
+            <input value={header} onChange={e => setHeader(e.target.value)}/>
+          </label>
+          <span className="btn" onClick={(e) => onEditBranch(e, data.index, header)}>edit branch</span>
+        </div>
+      )
+      break;
+    default:
+      throw new Error('Unhandled action');
   }
+
   let circleInfo = (data: string) => {
     let header = '';
     let text = '';

@@ -40,9 +40,7 @@ const TodoDispatchContext = createContext<TodoDispatch | undefined>(
 
 function todoReducer(state: TodoState, action: Action): TodoState {
   switch (action.type) {
-    case 'CREATE-TODO':
-      console.log(state)
-      // TODO: 현재 첫 노드는 예외 발생 가능
+    case 'CREATE-TODO': {
       if (isNaN(action.branch) || action.branch == null || state.branches[action.branch].merge_node.length !== 0)
         return state;
       state.branches[action.branch].todo.push({
@@ -54,7 +52,8 @@ function todoReducer(state: TodoState, action: Action): TodoState {
       });
       window.localStorage.setItem('TodoBranch', JSON.stringify(state));
       return {...state};
-    case "CREATE-BRANCH":
+    }
+    case "CREATE-BRANCH": {
       if (isNaN(action.branch) || action.branch == null || state.branches[action.branch].merge_node.length !== 0)
         return state;
       const target_y = state.branches[action.branch].y;
@@ -78,24 +77,28 @@ function todoReducer(state: TodoState, action: Action): TodoState {
       });
       window.localStorage.setItem('TodoBranch', JSON.stringify(state));
       return {...state};
-    case "SUCCESS":
+    }
+    case "SUCCESS": {
       if (isNaN(action.id[0]) || action.id[0] == null || isNaN(action.id[1]) || action.id[1] == null)
         return state;
       state.branches[action.id[0]].todo[action.id[1]].success = !state.branches[action.id[0]].todo[action.id[1]].success;
       window.localStorage.setItem('TodoBranch', JSON.stringify(state));
       return {...state};
-    case "EDIT-TODO":
+    }
+    case "EDIT-TODO": {
       const target = state.branches[action.y].todo[action.x];
       target.header = action.header;
       target.text = action.text;
       window.localStorage.setItem('TodoBranch', JSON.stringify(state));
       return {...state};
-    case "EDIT-BRANCH":
+    }
+    case "EDIT-BRANCH": {
       const branch = state.branches[action.index];
       branch.name = action.name;
       window.localStorage.setItem('TodoBranch', JSON.stringify(state));
       return {...state};
-    case 'MERGE':
+    }
+    case 'MERGE': {
       if (isNaN(action.branch) || action.branch == null || action.branch === 0 || state.branches[action.branch].merge_node.length !== 0)
         return state;
       const target_branch = state.branches[action.branch];
@@ -110,6 +113,7 @@ function todoReducer(state: TodoState, action: Action): TodoState {
       });
       window.localStorage.setItem('TodoBranch', JSON.stringify(state));
       return {...state};
+    }
     default:
       throw new Error('Unhandled action');
   }
