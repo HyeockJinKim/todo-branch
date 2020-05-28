@@ -50,6 +50,7 @@ function todoReducer(state: TodoState, action: Action): TodoState {
         text: action.text,
         success: false,
       });
+      window.localStorage.setItem('TodoBranch', JSON.stringify(state));
       return {...state};
     case "CREATE-BRANCH":
       if (isNaN(action.branch) || action.branch == null || state.branches[action.branch].merge_node.length !== 0)
@@ -73,11 +74,13 @@ function todoReducer(state: TodoState, action: Action): TodoState {
         merge_node: [],
         y: target_y + 1,
       });
+      window.localStorage.setItem('TodoBranch', JSON.stringify(state));
       return {...state};
     case "SUCCESS":
       if (isNaN(action.id[0]) || action.id[0] == null || isNaN(action.id[1]) || action.id[1] == null)
         return state;
       state.branches[action.id[0]].todo[action.id[1]].success = !state.branches[action.id[0]].todo[action.id[1]].success;
+      window.localStorage.setItem('TodoBranch', JSON.stringify(state));
       return {...state};
     case 'MERGE':
       if (isNaN(action.branch) || action.branch == null || action.branch === 0 || state.branches[action.branch].merge_node.length !== 0)
@@ -92,6 +95,7 @@ function todoReducer(state: TodoState, action: Action): TodoState {
         text: target_branch.name + " Merged!",
         success: true,
       });
+      window.localStorage.setItem('TodoBranch', JSON.stringify(state));
       return {...state};
     default:
       throw new Error('Unhandled action');
@@ -99,47 +103,32 @@ function todoReducer(state: TodoState, action: Action): TodoState {
 }
 
 export function TodoContextProvider({children}: { children: React.ReactNode }) {
-  const [todo, dispatch] = useReducer(todoReducer, {
-    branches: [
-      {
-        parent: 0,
-        name: "Master",
-        todo: [
-          {
-            x: 0,
-            parent: [0, 0],
-            header: "Initial Header",
-            text: "Initial Text",
-            success: false,
-          },
-          {
-            x: 1,
-            parent: [0, 0],
-            header: "Second Header",
-            text: "Second Text",
-            success: false,
-          }],
-        merge_node: [],
-        y: 0,
-      },
-      {
-        parent: 0,
-        name: "Second",
-        todo: [
-          {
-            x: 2,
-            parent: [0, 0],
-            header: "First Branch",
-            text: "First Branch Text",
-            success: false,
-          }
-        ],
-        merge_node: [],
-        y: 1,
-      }
-    ],
-    global_x: 3,
-  });
+  let item = window.localStorage.getItem("TodoBranch");
+  let init;
+  if (item === null) {
+    init = {
+      branches: [
+        {
+          parent: 0,
+          name: "master",
+          todo: [
+            {
+              x: 0,
+              parent: [0, 0],
+              header: "Initial Header",
+              text: "Initial Text",
+              success: false,
+            }
+          ],
+          merge_node: [],
+          y: 0,
+        }],
+      global_x: 1,
+    }
+  } else {
+    init = JSON.parse(item);
+  }
+  const [todo, dispatch] = useReducer(todoReducer, init);
 
   return (
     <TodoDispatchContext.Provider value={dispatch}>
