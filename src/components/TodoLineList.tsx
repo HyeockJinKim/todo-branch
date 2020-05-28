@@ -20,14 +20,14 @@ function TodoLineList() {
         ));
         if (branch.merge_node.length === 0) {
           lines.push(
-            <line style={cursor_css} data-tip={index} data-for={'create_tooltip'} data-event="click"
+            <line style={cursor_css}
                   x1={line_location(branch.todo[branch.todo.length - 1].x)} y1={line_location(branch.y)}
                   x2={line_location(todoBranch.global_x)} y2={line_location(branch.y)}
                   stroke="white" strokeWidth="3"/>
           )
         } else {
           lines.push(
-            <line style={cursor_css} data-tip={index} data-for={'create_tooltip'} data-event="click"
+            <line style={cursor_css}
                   x1={line_location(branch.todo[branch.todo.length - 1].x)} y1={line_location(branch.y)}
                   x2={line_location(todoBranch.branches[branch.merge_node[0]].todo[branch.merge_node[1]].x)}
                   y2={line_location(todoBranch.branches[branch.merge_node[0]].y)}

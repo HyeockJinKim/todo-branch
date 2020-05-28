@@ -29,6 +29,7 @@ type Action =
   | { type: 'CREATE-TODO'; header: string, text: string, branch: number }
   | { type: 'CREATE-BRANCH'; branch: number, name: string }
   | { type: 'SUCCESS'; id: number[] }
+  | { type: 'EDIT-TODO'; header: string, text: string, x: number, y: number }
   | { type: 'MERGE'; branch: number };
 
 type TodoDispatch = Dispatch<Action>;
@@ -80,6 +81,12 @@ function todoReducer(state: TodoState, action: Action): TodoState {
       if (isNaN(action.id[0]) || action.id[0] == null || isNaN(action.id[1]) || action.id[1] == null)
         return state;
       state.branches[action.id[0]].todo[action.id[1]].success = !state.branches[action.id[0]].todo[action.id[1]].success;
+      window.localStorage.setItem('TodoBranch', JSON.stringify(state));
+      return {...state};
+    case "EDIT-TODO":
+      let target = state.branches[action.y].todo[action.x];
+      target.header = action.header;
+      target.text = action.text;
       window.localStorage.setItem('TodoBranch', JSON.stringify(state));
       return {...state};
     case 'MERGE':

@@ -12,9 +12,9 @@ function TodoCircleList() {
   });
   return (
     <g className="todo-circle">
-      {branches.map(branch => (
+      {branches.map((branch, index) => (
         branch.todo.map((todo, x) => (
-          <circle data-tip='' data-for={'circle_' + branch.y + '_' + todo.x}
+          <circle data-tip={JSON.stringify({y: index, x: x})} data-for='todo_tooltip'
                   onDoubleClick={() => dispatch({type: "SUCCESS", id: [branch.y, x++]})} style={cursor_css}
                   cx={circle_location(todo.x)} cy={circle_location(branch.y)} r="7" stroke="white" strokeWidth="2.5"
                   fill={todo.success ? "white" : "#282c34"}>
