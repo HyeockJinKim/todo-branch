@@ -27,7 +27,7 @@ enum TodoTooltip {
 function ToolTip() {
   const branchTooltip = React.useRef(null);
   const [inputs, setInput] = useState(BranchTooltip.None);
-  const [circleTooltip, setCircleTooltip] = useState(TodoTooltip.Info);
+  const [todoTooltip, setTodoTooltip] = useState(TodoTooltip.Info);
   const [infoHeader, setInfoHeader] = useState('');
   const [infoText, setInfoText] = useState('');
   const [typ, setType] = useState(TodoType.Normal);
@@ -35,6 +35,7 @@ function ToolTip() {
   const dispatch = useTodoDispatch();
 
   const resetAll = () => {
+    setTodoTooltip(TodoTooltip.Info);
     setInput(BranchTooltip.None);
   }
 
@@ -48,7 +49,7 @@ function ToolTip() {
       text,
       typ,
     })
-    setCircleTooltip(TodoTooltip.Info);
+    setTodoTooltip(TodoTooltip.Info);
   };
   const onMerge = (e: React.MouseEvent, num: number) => {
     e.preventDefault();
@@ -108,7 +109,7 @@ function ToolTip() {
       <div>
         <h3>{header}</h3>
         <span>{text}</span>
-        <span className="btn" onClick={() => setCircleTooltip(TodoTooltip.Edit)}>edit</span>
+        <span className="btn" onClick={() => setTodoTooltip(TodoTooltip.Edit)}>edit</span>
       </div>
     );
   }
@@ -124,7 +125,7 @@ function ToolTip() {
     );
   };
 
-  if (circleTooltip === TodoTooltip.Edit) {
+  if (todoTooltip === TodoTooltip.Edit) {
     circleInfo = (data: string) => {
       let tip = JSON.parse(data);
 
@@ -141,10 +142,14 @@ function ToolTip() {
           <label>
             Type
             <svg style={{display: "block", margin: "3px auto", cursor: "pointer"}} width="120" height="20">
-              <circle cx="10" cy="10" r="9" stroke="black" strokeWidth="1" fill="white" onClick={() => setType(TodoType.Normal)}/>
-              <circle cx="40" cy="10" r="9" stroke="black" strokeWidth="1" fill="yellow" onClick={() => setType(TodoType.Warning)}/>
-              <circle cx="70" cy="10" r="9" stroke="black" strokeWidth="1" fill="orange" onClick={() => setType(TodoType.Important)}/>
-              <circle cx="100" cy="10" r="9" stroke="black" strokeWidth="1" fill="red" onClick={() => setType(TodoType.MUST)}/>
+              <circle cx="10" cy="10" r="9" stroke="black" strokeWidth="1" fill="white"
+                      onClick={() => setType(TodoType.Normal)}/>
+              <circle cx="40" cy="10" r="9" stroke="black" strokeWidth="1" fill="yellow"
+                      onClick={() => setType(TodoType.Warning)}/>
+              <circle cx="70" cy="10" r="9" stroke="black" strokeWidth="1" fill="orange"
+                      onClick={() => setType(TodoType.Important)}/>
+              <circle cx="100" cy="10" r="9" stroke="black" strokeWidth="1" fill="red"
+                      onClick={() => setType(TodoType.MUST)}/>
             </svg>
           </label>
           <span className="btn" onClick={(e) => onEditTodo(e, tip.x, tip.y, infoHeader, infoText)}>edit</span>
@@ -157,7 +162,7 @@ function ToolTip() {
   });
   return (
     <div>
-      <ReactTooltip id='todo_tooltip' effect='solid' border={true} place="bottom"
+      <ReactTooltip id='todo_tooltip' effect='solid' border={true} place="bottom" afterHide={resetAll}
                     type={'light'} delayHide={500} delayUpdate={300} getContent={(data) => (circleInfo(data))}/>
       <ReactTooltip ref={branchTooltip} id='create_tooltip' place='right' effect='solid' clickable={true}
                     type={'light'} globalEventOff='click' afterHide={resetAll}

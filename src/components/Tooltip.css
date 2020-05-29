@@ -29,3 +29,8 @@ label {
     font-weight: bold;
     text-align: left;
 }
+
+#todo_tooltip, #create_tooltip {
+    max-width: 250px;
+    word-break: break-word;
+}
