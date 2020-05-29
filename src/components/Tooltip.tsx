@@ -136,7 +136,7 @@ function ToolTip() {
           </label>
           <label>
             Text
-            <input value={infoText} onChange={e => setInfoText(e.target.value)}/>
+            <textarea value={infoText} onChange={e => setInfoText(e.target.value)}/>
           </label>
           <label>
             Type

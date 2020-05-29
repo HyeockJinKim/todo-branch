@@ -41,7 +41,7 @@ function NewTodoTooltip(props: {branchTooltip: MutableRefObject<any>, data: Tip}
       </label>
       <label>
         Text
-        <input value={text} onChange={e => setText(e.target.value)}/>
+        <textarea value={text} onChange={e => setText(e.target.value)}/>
       </label>
       <label>
         Type

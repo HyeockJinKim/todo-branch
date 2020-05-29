@@ -16,12 +16,13 @@ h3 {
     margin: .3rem auto .8rem auto;
 }
 
-label, input {
+label, input, textarea {
     display: block;
     font-size: 13px;
     text-align: center;
     border-radius: .3rem;
     margin: .4rem auto;
+    resize: none;
 }
 
 label {
