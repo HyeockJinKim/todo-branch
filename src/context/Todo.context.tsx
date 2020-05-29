@@ -1,10 +1,21 @@
 import React, {createContext, Dispatch, useContext, useReducer} from 'react';
 
+export enum TodoType {
+  Initial,
+  Normal,
+  Merge,
+  MUST,
+  Warning,
+  Important,
+  Plan,
+}
+
 export type Todo = {
   x: number;
   parent: number[];
   header: string,
   text: string,
+  type: TodoType
   success: boolean,
 };
 
@@ -26,10 +37,10 @@ type TodoState = TodoBranch;
 const TodoStateContext = createContext<TodoState | undefined>(undefined);
 
 type Action =
-  | { type: 'CREATE-TODO'; header: string, text: string, branch: number }
+  | { type: 'CREATE-TODO'; header: string, text: string, branch: number, typ: TodoType }
   | { type: 'CREATE-BRANCH'; branch: number, name: string }
   | { type: 'SUCCESS'; id: number[] }
-  | { type: 'EDIT-TODO'; header: string, text: string, x: number, y: number }
+  | { type: 'EDIT-TODO'; header: string, text: string, x: number, y: number, typ: TodoType }
   | { type: 'EDIT-BRANCH'; index: number, name: string }
   | { type: 'MERGE'; branch: number };
 
@@ -48,6 +59,7 @@ function todoReducer(state: TodoState, action: Action): TodoState {
         parent: [action.branch, state.branches[action.branch].todo.length - 1],
         header: action.header,
         text: action.text,
+        type: action.typ,
         success: false,
       });
       window.localStorage.setItem('TodoBranch', JSON.stringify(state));
@@ -70,6 +82,7 @@ function todoReducer(state: TodoState, action: Action): TodoState {
           parent: [action.branch, state.branches[action.branch].todo.length - 1],
           header: 'First Plan',
           text: 'Initial State',
+          type: TodoType.Initial,
           success: false,
         }],
         merge_node: [],
@@ -89,6 +102,7 @@ function todoReducer(state: TodoState, action: Action): TodoState {
       const target = state.branches[action.y].todo[action.x];
       target.header = action.header;
       target.text = action.text;
+      target.type = action.typ;
       window.localStorage.setItem('TodoBranch', JSON.stringify(state));
       return {...state};
     }
@@ -109,6 +123,7 @@ function todoReducer(state: TodoState, action: Action): TodoState {
         parent: [parent, state.branches[parent].todo.length - 1],
         header: target_branch.name + " Merged!",
         text: target_branch.name + " Merged!",
+        type: TodoType.Merge,
         success: true,
       });
       window.localStorage.setItem('TodoBranch', JSON.stringify(state));
@@ -134,6 +149,7 @@ export function TodoContextProvider({children}: { children: React.ReactNode }) {
               parent: [0, 0],
               header: "Initial Header",
               text: "Initial Text",
+              type: TodoType.Initial,
               success: false,
             }
           ],
