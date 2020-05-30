@@ -114,7 +114,6 @@ function ToolTip() {
     if (data !== null) {
       let tip = JSON.parse(data);
       const todo = branches[tip.y].todo[tip.x];
-      console.log(todo);
       header = todo.header;
       text = todo.text;
       start_date = todo.start_date !== null ? date_to_string(todo.start_date) : '~';
