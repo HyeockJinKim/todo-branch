@@ -22,6 +22,7 @@ label, input, textarea {
     text-align: center;
     border-radius: .3rem;
     margin: .4rem auto;
+    width: 170px;
     resize: none;
 }
 

@@ -38,8 +38,7 @@ function TodoCircleList() {
           <circle data-tip={JSON.stringify({y: index, x: x})} data-for='todo_tooltip'
                   onDoubleClick={() => dispatch({type: "SUCCESS", id: [branch.y, x++]})} style={cursor_css}
                   cx={circle_location(todo.x)} cy={circle_location(branch.y)} r="7" strokeWidth="2.5"
-                  {...circle_type(todo)}>
-          </circle>
+                  {...circle_type(todo)}/>
         ))
       ))}
     </g>

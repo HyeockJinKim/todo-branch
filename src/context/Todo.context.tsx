@@ -13,10 +13,12 @@ export enum TodoType {
 export type Todo = {
   x: number;
   parent: number[];
-  header: string,
-  text: string,
-  type: TodoType
-  success: boolean,
+  header: string;
+  text: string;
+  start_date: Date | null;
+  end_date: Date | null;
+  type: TodoType;
+  success: boolean;
 };
 
 export type Branch = {
@@ -37,10 +39,10 @@ type TodoState = TodoBranch;
 const TodoStateContext = createContext<TodoState | undefined>(undefined);
 
 type Action =
-  | { type: 'CREATE-TODO'; header: string, text: string, branch: number, typ: TodoType }
+  | { type: 'CREATE-TODO'; header: string, text: string, branch: number, typ: TodoType, start_date: Date | null, end_date: Date | null }
   | { type: 'CREATE-BRANCH'; branch: number, name: string }
   | { type: 'SUCCESS'; id: number[] }
-  | { type: 'EDIT-TODO'; header: string, text: string, x: number, y: number, typ: TodoType }
+  | { type: 'EDIT-TODO'; header: string, text: string, x: number, y: number, typ: TodoType, start_date: Date | null, end_date: Date | null }
   | { type: 'EDIT-BRANCH'; index: number, name: string }
   | { type: 'MERGE'; branch: number };
 
@@ -60,6 +62,8 @@ function todoReducer(state: TodoState, action: Action): TodoState {
         header: action.header,
         text: action.text,
         type: action.typ,
+        start_date: action.start_date,
+        end_date: action.end_date,
         success: false,
       });
       window.localStorage.setItem('TodoBranch', JSON.stringify(state));
@@ -83,6 +87,8 @@ function todoReducer(state: TodoState, action: Action): TodoState {
           header: 'First Plan',
           text: 'Initial State',
           type: TodoType.Initial,
+          start_date: new Date(),
+          end_date: null,
           success: false,
         }],
         merge_node: [],
@@ -103,6 +109,8 @@ function todoReducer(state: TodoState, action: Action): TodoState {
       target.header = action.header;
       target.text = action.text;
       target.type = action.typ;
+      target.start_date = action.start_date;
+      target.end_date = action.end_date;
       window.localStorage.setItem('TodoBranch', JSON.stringify(state));
       return {...state};
     }
@@ -124,6 +132,8 @@ function todoReducer(state: TodoState, action: Action): TodoState {
         header: target_branch.name + " Merged!",
         text: target_branch.name + " Merged!",
         type: TodoType.Merge,
+        start_date: target_branch.todo[0].start_date,
+        end_date: new Date(),
         success: true,
       });
       window.localStorage.setItem('TodoBranch', JSON.stringify(state));
@@ -150,6 +160,8 @@ export function TodoContextProvider({children}: { children: React.ReactNode }) {
               header: "Initial Header",
               text: "Initial Text",
               type: TodoType.Initial,
+              start_date: new Date(),
+              end_date: null,
               success: false,
             }
           ],
