@@ -7,8 +7,10 @@ import * as path from 'path';
 let mainWindow: BrowserWindow;
 
 function createWindow() {
-  const dockMenu = Menu.buildFromTemplate([]);
-  app.dock.setMenu(dockMenu);
+  if (process.platform === "darwin") {
+    const dockMenu = Menu.buildFromTemplate([]);
+    app.dock.setMenu(dockMenu);
+  }
 
   let mainWindow = new BrowserWindow({
     x: 0,

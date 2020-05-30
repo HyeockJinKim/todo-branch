@@ -7,8 +7,10 @@ var path = require("path");
 // 1. Garbage Collection 이 일어나지 않도록 함수 밖에 선언함.
 var mainWindow;
 function createWindow() {
-    var dockMenu = electron_1.Menu.buildFromTemplate([]);
-    electron_1.app.dock.setMenu(dockMenu);
+    if (process.platform === "darwin") {
+        var dockMenu = electron_1.Menu.buildFromTemplate([]);
+        electron_1.app.dock.setMenu(dockMenu);
+    }
     var mainWindow = new electron_1.BrowserWindow({
         x: 0,
         y: 0,

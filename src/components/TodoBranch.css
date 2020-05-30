@@ -1,0 +1,7 @@
+.box::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera*/
+}
+
+.box {
+    overflow-x: auto;
+}
