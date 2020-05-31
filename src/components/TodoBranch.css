@@ -5,3 +5,46 @@
 .box {
     overflow-x: auto;
 }
+
+.undo {
+    position: absolute;
+    margin-left: 200px;
+    top: 0;
+    margin-top: 53px;
+    cursor: pointer;
+}
+
+.undo:hover {
+    animation: undo-logo-spin infinite 1s linear;
+}
+
+.redo {
+    position: absolute;
+    top: 0;
+    margin-top: 53px;
+    margin-left: 250px;
+    transform: scaleX(-1);
+    cursor: pointer;
+}
+
+.redo:hover {
+    animation: redo-logo-spin infinite 1s linear;
+}
+
+@keyframes undo-logo-spin {
+    from {
+        transform: rotate(360deg);
+    }
+    to {
+        transform: rotate(0deg);
+    }
+}
+
+@keyframes redo-logo-spin {
+    from {
+        transform: scaleX(-1) rotate(360deg);
+    }
+    to {
+        transform: scaleX(-1) rotate(0deg);
+    }
+}

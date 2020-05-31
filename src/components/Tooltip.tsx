@@ -113,14 +113,16 @@ function ToolTip() {
     let end_date = '';
     if (data !== null) {
       let tip = JSON.parse(data);
-      const todo = branches[tip.y].todo[tip.x];
-      header = todo.header;
-      text = todo.text;
-      start_date = todo.start_date !== null ? date_to_string(todo.start_date) : '~';
-      end_date = todo.end_date !== null ? date_to_string(todo.end_date) : '~';
-      setInfoHeader(todo.header);
-      setInfoText(todo.text);
-      setType(todo.type);
+      if (tip.y < branches.length && tip.x < branches[tip.y].todo.length) {
+        const todo = branches[tip.y].todo[tip.x];
+        header = todo.header;
+        text = todo.text;
+        start_date = todo.start_date !== null ? date_to_string(todo.start_date) : '~';
+        end_date = todo.end_date !== null ? date_to_string(todo.end_date) : '~';
+        setInfoHeader(todo.header);
+        setInfoText(todo.text);
+        setType(todo.type);
+      }
     }
     return (
       <div>

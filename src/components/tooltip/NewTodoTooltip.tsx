@@ -20,10 +20,6 @@ function NewTodoTooltip(props: {branchTooltip: MutableRefObject<any>, data: Tip}
     if (header === '') {
       header = 'temp header';
     }
-    if (text === '') {
-      text = 'temp text';
-    }
-
     dispatch({
       type: "CREATE-TODO",
       branch: num,

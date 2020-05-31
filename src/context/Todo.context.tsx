@@ -1,4 +1,5 @@
 import React, {createContext, Dispatch, useContext, useReducer} from 'react';
+import TodoBranch from "../components/TodoBranch";
 
 export enum TodoType {
   Initial,
@@ -29,9 +30,16 @@ export type Branch = {
   y: number;
 };
 
+type Backup = {
+  branches: Branch[];
+  global_x: number;
+}
+
 export type TodoBranch = {
   branches: Branch[];
   global_x: number;
+  history: Backup[];
+  history_index: number;
 }
 
 type TodoState = TodoBranch;
@@ -44,18 +52,27 @@ type Action =
   | { type: 'SUCCESS'; id: number[] }
   | { type: 'EDIT-TODO'; header: string, text: string, x: number, y: number, typ: TodoType, start_date: Date | null, end_date: Date | null }
   | { type: 'EDIT-BRANCH'; index: number, name: string }
-  | { type: 'MERGE'; branch: number };
+  | { type: 'MERGE'; branch: number }
+  | { type: 'UNDO'; }
+  | { type: 'REDO'; };
 
 type TodoDispatch = Dispatch<Action>;
 const TodoDispatchContext = createContext<TodoDispatch | undefined>(
   undefined
 );
 
+function history_save(state: TodoState) {
+  state.history_index++;
+  state.history.splice(state.history_index, state.history.length - state.history_index, JSON.parse(JSON.stringify(state)));
+}
+
 function todoReducer(state: TodoState, action: Action): TodoState {
+
   switch (action.type) {
     case 'CREATE-TODO': {
       if (isNaN(action.branch) || action.branch == null || state.branches[action.branch].merge_node.length !== 0)
         return state;
+      history_save(state);
       state.branches[action.branch].todo.push({
         x: state.global_x++,
         parent: [action.branch, state.branches[action.branch].todo.length - 1],
@@ -72,6 +89,7 @@ function todoReducer(state: TodoState, action: Action): TodoState {
     case "CREATE-BRANCH": {
       if (isNaN(action.branch) || action.branch == null || state.branches[action.branch].merge_node.length !== 0)
         return state;
+      history_save(state);
       const target_y = state.branches[action.branch].y;
       state.branches = state.branches.map(branch => {
         if (branch.y > target_y)
@@ -100,11 +118,13 @@ function todoReducer(state: TodoState, action: Action): TodoState {
     case "SUCCESS": {
       if (isNaN(action.id[0]) || action.id[0] == null || isNaN(action.id[1]) || action.id[1] == null)
         return state;
+      history_save(state);
       state.branches[action.id[0]].todo[action.id[1]].success = !state.branches[action.id[0]].todo[action.id[1]].success;
       window.localStorage.setItem('TodoBranch', JSON.stringify(state));
       return {...state};
     }
     case "EDIT-TODO": {
+      history_save(state);
       const target = state.branches[action.y].todo[action.x];
       target.header = action.header;
       target.text = action.text;
@@ -115,6 +135,7 @@ function todoReducer(state: TodoState, action: Action): TodoState {
       return {...state};
     }
     case "EDIT-BRANCH": {
+      history_save(state);
       const branch = state.branches[action.index];
       branch.name = action.name;
       window.localStorage.setItem('TodoBranch', JSON.stringify(state));
@@ -123,6 +144,7 @@ function todoReducer(state: TodoState, action: Action): TodoState {
     case 'MERGE': {
       if (isNaN(action.branch) || action.branch == null || action.branch === 0 || state.branches[action.branch].merge_node.length !== 0)
         return state;
+      history_save(state);
       const target_branch = state.branches[action.branch];
       const parent = target_branch.parent;
       target_branch.merge_node = [parent, state.branches[parent].todo.length];
@@ -136,6 +158,27 @@ function todoReducer(state: TodoState, action: Action): TodoState {
         end_date: new Date(),
         success: true,
       });
+      window.localStorage.setItem('TodoBranch', JSON.stringify(state));
+      return {...state};
+    }
+    case "UNDO": {
+      if (state.history_index < 0)
+        return state;
+      let states = state.history.splice(state.history_index--, 1, JSON.parse(JSON.stringify(state)));
+      const undo_state = states[0];
+      state.branches = undo_state.branches;
+      state.global_x = undo_state.global_x;
+      window.localStorage.setItem('TodoBranch', JSON.stringify(state));
+      return {...state};
+    }
+    case "REDO": {
+      if (state.history_index >= state.history.length - 1)
+        return state;
+      state.history_index++;
+      let states = state.history.splice(state.history_index, 1, JSON.parse(JSON.stringify(state)));
+      const redo_state = states[0];
+      state.branches = redo_state.branches;
+      state.global_x = redo_state.global_x;
       window.localStorage.setItem('TodoBranch', JSON.stringify(state));
       return {...state};
     }
@@ -169,9 +212,17 @@ export function TodoContextProvider({children}: { children: React.ReactNode }) {
           y: 0,
         }],
       global_x: 1,
+      history: [],
+      history_index: -1,
     }
   } else {
     init = JSON.parse(item);
+    if (init.history === undefined) {
+      init.history = [];
+    }
+    if (init.history_index === undefined) {
+      init.history_index = init.history.length;
+    }
   }
   const [todo, dispatch] = useReducer(todoReducer, init);
 
