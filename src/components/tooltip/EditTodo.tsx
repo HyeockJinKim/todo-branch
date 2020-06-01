@@ -18,8 +18,7 @@ function EditTodo(props: NewTodoProps) {
   const branches = useBranchState();
   const dispatch = useTodoDispatch();
 
-  const onEditTodo = (e: React.MouseEvent, x: number, y: number, header: string, text: string) => {
-    e.preventDefault();
+  const onEditTodo = (x: number, y: number, header: string, text: string) => {
     if (header === '') {
       header = 'temp header';
     }
@@ -53,15 +52,23 @@ function EditTodo(props: NewTodoProps) {
     }
   }
 
+  const enter_key = (e: React.KeyboardEvent) => {
+    if (!e.shiftKey) {
+      if (e.key === 'Enter') {
+        onEditTodo(x, y, header !== null ? header : '', text);
+      }
+    }
+  }
+
   return (
     <div className="NewTodoTooltip">
       <label>
         할 일
-        <input value={header !== null ? header : ''} onChange={e => setHeader(e.target.value)}/>
+        <input value={header !== null ? header : ''} onKeyDown={(e) => enter_key(e)} onChange={e => setHeader(e.target.value)}/>
       </label>
       <label>
         내용
-        <textarea value={text} onChange={e => setText(e.target.value)}/>
+        <textarea value={text} onKeyDown={(e) => enter_key(e)} onChange={e => setText(e.target.value)}/>
       </label>
       <label>
         타입
@@ -81,7 +88,7 @@ function EditTodo(props: NewTodoProps) {
         기한
         <DatePicker style={{width: "80px"}} selected={date} onChange={setDate}/>
       </label>
-      <span className="btn" onClick={(e) => onEditTodo(e, x, y, header !== null ? header : '', text)}>
+      <span className="btn" onClick={(e) => onEditTodo(x, y, header !== null ? header : '', text)}>
         {props.tooltipType === BranchTooltip.EditTodo ? "edit todo" : "new todo"}
       </span>
     </div>

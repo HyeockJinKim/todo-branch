@@ -12,8 +12,7 @@ function EditBranch(props: EditBranchProps) {
   const [header, setHeader] = useState('');
   const dispatch = useTodoDispatch();
 
-  const onEditBranch = (e: React.MouseEvent, num: number, name: string) => {
-    e.preventDefault();
+  const onEditBranch = (num: number, name: string) => {
     if (name === '') {
       name = 'temp branch';
     }
@@ -26,6 +25,14 @@ function EditBranch(props: EditBranchProps) {
     props.setTooltip(BranchTooltip.None);
   };
 
+  const enter_key = (e: React.KeyboardEvent) => {
+    if (!e.shiftKey) {
+      if (e.key === 'Enter') {
+        onEditBranch(index, header);
+      }
+    }
+  }
+
   let index = 0;
   if (props.dataTip !== null)
     index = JSON.parse(props.dataTip).y;
@@ -34,9 +41,9 @@ function EditBranch(props: EditBranchProps) {
     <div className="EditBranchTooltip">
       <label>
         Branch Name
-        <input value={header} onChange={e => setHeader(e.target.value)}/>
+        <input value={header} onKeyDown={(e) => enter_key(e)} onChange={e => setHeader(e.target.value)}/>
       </label>
-      <span className="btn" onClick={(e) => onEditBranch(e, index, header)}>
+      <span className="btn" onClick={(e) => onEditBranch(index, header)}>
         {props.tooltipType === BranchTooltip.EditBranch ? "edit branch" : "new branch"}
       </span>
     </div>
