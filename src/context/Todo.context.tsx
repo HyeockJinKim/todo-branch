@@ -22,6 +22,16 @@ export type Todo = {
   success: boolean;
 };
 
+export enum BranchTooltip {
+  None,
+  BranchTooltip,
+  NewTodo,
+  NewBranch,
+  EditBranch,
+  TodoInfo,
+  EditTodo,
+}
+
 export type Branch = {
   parent: number;
   name: string;

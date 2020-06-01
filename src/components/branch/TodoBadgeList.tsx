@@ -1,9 +1,9 @@
 import React, {useEffect} from 'react';
-import {useBranchState} from "../context/Todo.context";
+import {useBranchState} from "../../context/Todo.context";
 import ReactTooltip from "react-tooltip";
 import TodoBadge from "./TodoBadge";
 
-function TodoCircleList() {
+function TodoBadgeList() {
   const branches = useBranchState();
   useEffect(() => {
     ReactTooltip.rebuild();
@@ -20,4 +20,4 @@ function TodoCircleList() {
   );
 }
 
-export default TodoCircleList;
+export default TodoBadgeList;

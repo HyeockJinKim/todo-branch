@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import {useTodoBranchState} from "../context/Todo.context";
+import {BranchTooltip, useTodoBranchState} from "../../context/Todo.context";
 import ReactTooltip from "react-tooltip";
 
 function TodoLineList() {
@@ -36,7 +36,8 @@ function TodoLineList() {
         }
         lines.push(
           <text x={line_location(todoBranch.global_x) + 30} y={line_location(branch.y) + 7} fill="white"
-                data-tip={JSON.stringify({index, name: branch.name})} data-for={'create_tooltip'} data-event="click"
+                data-tip={JSON.stringify({x: branch.todo.length, y: index, type: BranchTooltip.BranchTooltip})}
+                data-for='tooltip' data-event="click"
                 style={{cursor: "pointer", fontSize: "18px"}}>{branch.name}</text>
         )
 

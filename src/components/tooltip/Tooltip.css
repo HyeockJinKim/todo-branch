@@ -31,7 +31,8 @@ label {
     text-align: left;
 }
 
-#todo_tooltip, #create_tooltip {
+#tooltip {
     max-width: 250px;
     word-break: break-word;
+    z-index: 2;
 }

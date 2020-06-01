@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import {Todo, TodoType, useTodoDispatch} from "../context/Todo.context";
+import {BranchTooltip, Todo, TodoType, useTodoDispatch} from "../../context/Todo.context";
 import ReactTooltip from "react-tooltip";
 
 type TodoBadgeType = {
@@ -34,38 +34,39 @@ function TodoBadge(props: TodoBadgeType) {
       height: "12",
       style: cursor_css,
     };
+    const dataTip = {y: props.y_index, x: props.x_index, type: BranchTooltip.TodoInfo};
     switch (todo.type) {
       case TodoType.Initial: {
         const attr = {fill: "#282c34", stroke: "white"};
-        return <rect data-tip={JSON.stringify({y: props.y_index, x: props.x_index})} data-for='todo_tooltip'
+        return <rect data-tip={JSON.stringify(dataTip)} data-for='tooltip' data-event="click mouseenter"
                      {...attr} {...rect_attr}/>
       }
       case TodoType.Merge: {
         const attr = {fill: "#282c34", stroke: "green"};
-        return <rect data-tip={JSON.stringify({y: props.y_index, x: props.x_index})} data-for='todo_tooltip'
+        return <rect data-tip={JSON.stringify(dataTip)} data-for='tooltip' data-event="click mouseenter"
                      {...attr} {...rect_attr}/>
       }
       case TodoType.MUST: {
         const attr = {fill: todo.success ? "red" : "#282c34", stroke: "red"};
-        return <circle data-tip={JSON.stringify({y: props.y_index, x: props.x_index})} data-for='todo_tooltip'
+        return <circle data-tip={JSON.stringify(dataTip)} data-for='tooltip' data-event="click mouseenter"
                        onDoubleClick={() => dispatch({type: "SUCCESS", id: [props.y_index, props.x_index]})}
                        {...attr} {...circle_attr}/>
       }
       case TodoType.Important: {
         const attr = {fill: todo.success ? "orange" : "#282c34", stroke: "orange"};
-        return <circle data-tip={JSON.stringify({y: props.y_index, x: props.x_index})} data-for='todo_tooltip'
+        return <circle data-tip={JSON.stringify(dataTip)} data-for='tooltip' data-event="click mouseenter"
                        onDoubleClick={() => dispatch({type: "SUCCESS", id: [props.y_index, props.x_index]})}
                        {...attr} {...circle_attr}/>
       }
       case TodoType.Warning: {
         const attr = {fill: todo.success ? "yellow" : "#282c34", stroke: "yellow"};
-        return <circle data-tip={JSON.stringify({y: props.y_index, x: props.x_index})} data-for='todo_tooltip'
+        return <circle data-tip={JSON.stringify(dataTip)} data-for='tooltip' data-event="click mouseenter"
                        onDoubleClick={() => dispatch({type: "SUCCESS", id: [props.y_index, props.x_index]})}
                        {...attr} {...circle_attr}/>
       }
       case TodoType.Plan: {
         const attr = {fill: "#282c34", stroke: "white", strokeDasharray: "10px 10px"};
-        return <circle data-tip={JSON.stringify({y: props.y_index, x: props.x_index})} data-for='todo_tooltip'
+        return <circle data-tip={JSON.stringify(dataTip)} data-for='tooltip' data-event="click mouseenter"
                        // TODO: Plan double click
                        // onDoubleClick={() => dispatch({type: "SUCCESS", id: [props.y_index, props.x_index]})}
                        {...attr} {...circle_attr}/>
@@ -73,7 +74,7 @@ function TodoBadge(props: TodoBadgeType) {
       case TodoType.Normal:
       default: {
         const attr = {fill: todo.success ? "white" : "#282c34", stroke: "white"};
-        return <circle data-tip={JSON.stringify({y: props.y_index, x: props.x_index})} data-for='todo_tooltip'
+        return <circle data-tip={JSON.stringify(dataTip)} data-for='tooltip' data-event="click mouseenter"
                        onDoubleClick={() => dispatch({type: "SUCCESS", id: [props.y_index, props.x_index]})}
                        {...attr} {...circle_attr}/>
       }

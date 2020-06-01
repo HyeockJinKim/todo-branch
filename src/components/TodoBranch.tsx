@@ -1,10 +1,9 @@
-import React, {useState} from 'react';
-import TodoCircleList from "./TodoCircleList";
-import TodoLineList from "./TodoLineList";
-import ToolTip from "./Tooltip";
+import React from 'react';
+import TodoBadgeList from "./branch/TodoBadgeList";
+import TodoLineList from "./branch/TodoLineList";
 import {useTodoBranchState, useTodoDispatch} from "../context/Todo.context";
 import "./TodoBranch.css"
-import Timer from "./Timer";
+import Timer from "./branch/Timer";
 
 function TodoBranch() {
   const todoBranch = useTodoBranchState();
@@ -12,7 +11,8 @@ function TodoBranch() {
   return (
     <div className="TodoBranch">
       <Timer/>
-      <svg onClick={() => dispatch({type: "UNDO"})} className="undo" x="0px" y="0px" width="25px" height="25px" viewBox="0 0 438.536 438.536">
+      <svg onClick={() => dispatch({type: "UNDO"})} className="undo" x="0px" y="0px" width="25px" height="25px"
+           viewBox="0 0 438.536 438.536">
         <g>
           <path fill="white" d="M421.125,134.191c-11.608-27.03-27.217-50.347-46.819-69.949C354.7,44.639,331.384,29.033,304.353,17.42
 		C277.325,5.807,248.969,0.005,219.275,0.005c-27.978,0-55.052,5.277-81.227,15.843C111.879,26.412,88.61,41.305,68.243,60.531
@@ -29,7 +29,8 @@ function TodoBranch() {
 		C438.536,189.569,432.732,161.22,421.125,134.191z"/>
         </g>
       </svg>
-      <svg onClick={() => dispatch({type: "REDO"})} className="redo" x="0px" y="0px" width="25px" height="25px" viewBox="0 0 438.536 438.536">
+      <svg onClick={() => dispatch({type: "REDO"})} className="redo" x="0px" y="0px" width="25px" height="25px"
+           viewBox="0 0 438.536 438.536">
         <g>
           <path fill="white" d="M421.125,134.191c-11.608-27.03-27.217-50.347-46.819-69.949C354.7,44.639,331.384,29.033,304.353,17.42
 		C277.325,5.807,248.969,0.005,219.275,0.005c-27.978,0-55.052,5.277-81.227,15.843C111.879,26.412,88.61,41.305,68.243,60.531
@@ -49,15 +50,14 @@ function TodoBranch() {
 
       <div className="box">
         <svg style={{
-          width: todoBranch.global_x * 50 + 200,
-          height: todoBranch.branches.length * 50 + 30,
+          width: todoBranch.global_x * 50 + 400,
+          height: todoBranch.branches.length * 50 + 800,
           margin: '2em 10%'
         }}>
           <TodoLineList/>
-          <TodoCircleList/>
+          <TodoBadgeList/>
         </svg>
       </div>
-      <ToolTip/>
     </div>
   );
 }
