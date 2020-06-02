@@ -21,6 +21,7 @@ export type Todo = {
   end_date: Date | null;
   type: TodoType;
   success: boolean;
+  WIP: boolean;
 };
 
 export enum BranchTooltip {
@@ -63,6 +64,7 @@ type Action =
   | { type: 'SUCCESS'; id: number[] }
   | { type: 'EDIT-TODO'; header: string, text: string, x: number, y: number, typ: TodoType, start_date: Date | null, end_date: Date | null }
   | { type: 'EDIT-BRANCH'; index: number, name: string }
+  | { type: 'WIP'; y: number, x: number }
   | { type: 'MERGE'; branch: number }
   | { type: 'UNDO'; }
   | { type: 'REDO'; }
@@ -95,6 +97,7 @@ function todoReducer(state: TodoState, action: Action): TodoState {
         start_date: action.start_date,
         end_date: action.end_date,
         success: false,
+        WIP: false,
       });
       window.localStorage.setItem('TodoBranch', JSON.stringify(state));
       return {...state};
@@ -121,6 +124,7 @@ function todoReducer(state: TodoState, action: Action): TodoState {
           start_date: new Date(),
           end_date: null,
           success: true,
+          WIP: false,
         }],
         merge_node: [],
         y: target_y + 1,
@@ -132,7 +136,19 @@ function todoReducer(state: TodoState, action: Action): TodoState {
       if (isNaN(action.id[0]) || action.id[0] == null || isNaN(action.id[1]) || action.id[1] == null)
         return state;
       history_save(state);
-      state.branches[action.id[0]].todo[action.id[1]].success = !state.branches[action.id[0]].todo[action.id[1]].success;
+      let target = state.branches[action.id[0]].todo[action.id[1]];
+      target.success = !target.success;
+      if (target.success)
+        target.end_date = new Date();
+      else
+        target.end_date = null;
+      window.localStorage.setItem('TodoBranch', JSON.stringify(state));
+      return {...state};
+    }
+    case "WIP": {
+      history_save(state);
+      let target = state.branches[action.y].todo[action.x];
+      target.WIP = !target.WIP;
       window.localStorage.setItem('TodoBranch', JSON.stringify(state));
       return {...state};
     }
@@ -171,6 +187,7 @@ function todoReducer(state: TodoState, action: Action): TodoState {
         start_date: target_branch.todo[0].start_date,
         end_date: new Date(),
         success: true,
+        WIP: false,
       });
       window.localStorage.setItem('TodoBranch', JSON.stringify(state));
       return {...state};
@@ -239,6 +256,7 @@ export function TodoContextProvider({children}: { children: React.ReactNode }) {
               start_date: new Date(),
               end_date: null,
               success: false,
+              WIP: false,
             }
           ],
           merge_node: [],

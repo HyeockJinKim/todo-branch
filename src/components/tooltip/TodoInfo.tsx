@@ -23,6 +23,7 @@ function TodoInfo(props: BranchChoiceProps) {
   let start_date = '';
   let end_date = '';
   let can_remove = true;
+  let success = false;
   if (props.dataTip !== null) {
     const tip = JSON.parse(props.dataTip);
     if (tip.y < branches.length && tip.x < branches[tip.y].todo.length) {
@@ -32,6 +33,7 @@ function TodoInfo(props: BranchChoiceProps) {
       start_date = todo.start_date !== null ? date_to_string(todo.start_date) : '~';
       end_date = todo.end_date !== null ? date_to_string(todo.end_date) : '~';
       can_remove = todo.type !== TodoType.Initial && todo.type !== TodoType.Merge;
+      success = todo.success;
     }
   }
   const onRemove = () => {
@@ -52,7 +54,7 @@ function TodoInfo(props: BranchChoiceProps) {
           style={{display: "block", textAlign: "center", fontWeight: "normal"}}>{start_date}</span>
       </label>
       <label>
-        기한
+        {success ? "완료일" : "기한"}
         <span style={{display: "block", textAlign: "center", fontWeight: "normal"}}>{end_date}</span>
       </label>
       <span className="btn" onClick={() => props.setTooltip(BranchTooltip.EditTodo)}>edit</span>
