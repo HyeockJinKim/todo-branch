@@ -12,37 +12,48 @@ type TodoBadgeType = {
 
 function TodoBadge(props: TodoBadgeType) {
   const dispatch = useTodoDispatch();
-  const circle_location = (x: number) => x * 50 + 10;
+  const badge_location = (x: number) => x * 50 + 25;
   const cursor_css = {cursor: 'pointer'};
   useEffect(() => {
     ReactTooltip.rebuild();
   });
 
   const badge_type = (todo: Todo) => {
+    const x_loc = badge_location(props.x);
+    const y_loc = badge_location(props.y);
     const circle_attr = {
-      cx: circle_location(props.x),
-      cy: circle_location(props.y),
+      cx: x_loc,
+      cy: y_loc,
       strokeWidth: "2.5",
       r: "7",
       style: cursor_css,
     };
     const rect_attr = {
-      x: circle_location(props.x) - 6,
-      y: circle_location(props.y) - 6,
+      x: x_loc - 6,
+      y: y_loc - 6,
       strokeWidth: "2.5",
       width: "12",
       height: "12",
       style: cursor_css,
     };
+    // const triangle_attr = {
+    //   points: (x_loc)+","+(y_loc-6)+" "+(x_loc-7)+","+(y_loc+6)+" "+(x_loc+7)+","+(y_loc+6),
+    //   strokeWidth: "2.5",
+    //   style: cursor_css,
+    // }
     const dataTip = {y: props.y_index, x: props.x_index, type: BranchTooltip.TodoInfo};
     switch (todo.type) {
       case TodoType.Initial: {
         const attr = {fill: "#282c34", stroke: "white"};
+        // return <polygon data-tip={JSON.stringify(dataTip)} data-for='tooltip' data-event="click mouseenter"
+        //                 {...attr} {...triangle_attr} />
         return <rect data-tip={JSON.stringify(dataTip)} data-for='tooltip' data-event="click mouseenter"
                      {...attr} {...rect_attr}/>
       }
       case TodoType.Merge: {
         const attr = {fill: "#282c34", stroke: "green"};
+        // return <polygon data-tip={JSON.stringify(dataTip)} data-for='tooltip' data-event="click mouseenter"
+        //                 {...attr} {...triangle_attr} />
         return <rect data-tip={JSON.stringify(dataTip)} data-for='tooltip' data-event="click mouseenter"
                      {...attr} {...rect_attr}/>
       }
@@ -80,6 +91,24 @@ function TodoBadge(props: TodoBadgeType) {
       }
     }
   };
+  if (props.todo.end_date !== null && !props.todo.success) {
+    let remain: number = new Date(props.todo.end_date).valueOf() - new Date().valueOf();
+    const _day = 1000 * 60 * 60 * 24;
+    if (remain / _day <= 2) {
+      const x_loc = badge_location(props.x);
+      const y_loc = badge_location(props.y);
+      const attr = {fill: "red", stroke: "white"};
+      const inverted_triangle_attr = {
+        points: (x_loc)+","+(y_loc-12)+" "+(x_loc-7)+","+(y_loc-24)+" "+(x_loc+7)+","+(y_loc-24),
+        strokeWidth: "2",
+        style: cursor_css,
+      }
+      return <g>
+        <polygon {...attr} {...inverted_triangle_attr} />
+        {badge_type(props.todo)}
+      </g>
+    }
+  }
 
   return badge_type(props.todo);
 }

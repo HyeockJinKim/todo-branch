@@ -2,6 +2,7 @@ import React, {createContext, Dispatch, useContext, useReducer} from 'react';
 import TodoBranch from "../components/TodoBranch";
 
 export enum TodoType {
+  // Badge Type
   Initial,
   Normal,
   Merge,
