@@ -120,7 +120,7 @@ function todoReducer(state: TodoState, action: Action): TodoState {
           type: TodoType.Initial,
           start_date: new Date(),
           end_date: null,
-          success: false,
+          success: true,
         }],
         merge_node: [],
         y: target_y + 1,
@@ -159,6 +159,7 @@ function todoReducer(state: TodoState, action: Action): TodoState {
         return state;
       history_save(state);
       const target_branch = state.branches[action.branch];
+      target_branch.todo[0].end_date = new Date();
       const parent = target_branch.parent;
       target_branch.merge_node = [parent, state.branches[parent].todo.length];
       state.branches[parent].todo.push({

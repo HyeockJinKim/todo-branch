@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import {BranchTooltip, Todo, TodoType, useTodoDispatch} from "../../context/Todo.context";
+import {BranchTooltip, Todo, TodoType, useBranchState, useTodoDispatch} from "../../context/Todo.context";
 import ReactTooltip from "react-tooltip";
 
 type TodoBadgeType = {
@@ -13,6 +13,7 @@ type TodoBadgeType = {
 function TodoBadge(props: TodoBadgeType) {
   const dispatch = useTodoDispatch();
   const badge_location = (x: number) => x * 50 + 25;
+  const branches = useBranchState();
   const cursor_css = {cursor: 'pointer'};
   useEffect(() => {
     ReactTooltip.rebuild();
@@ -44,14 +45,14 @@ function TodoBadge(props: TodoBadgeType) {
     const dataTip = {y: props.y_index, x: props.x_index, type: BranchTooltip.TodoInfo};
     switch (todo.type) {
       case TodoType.Initial: {
-        const attr = {fill: "#282c34", stroke: "white"};
+        const attr = {fill: branches[props.y_index].merge_node.length === 2 ? "white" : "#282c34", stroke: "white"};
         // return <polygon data-tip={JSON.stringify(dataTip)} data-for='tooltip' data-event="click mouseenter"
         //                 {...attr} {...triangle_attr} />
         return <rect data-tip={JSON.stringify(dataTip)} data-for='tooltip' data-event="click mouseenter"
                      {...attr} {...rect_attr}/>
       }
       case TodoType.Merge: {
-        const attr = {fill: "#282c34", stroke: "green"};
+        const attr = {fill: "white", stroke: "green"};
         // return <polygon data-tip={JSON.stringify(dataTip)} data-for='tooltip' data-event="click mouseenter"
         //                 {...attr} {...triangle_attr} />
         return <rect data-tip={JSON.stringify(dataTip)} data-for='tooltip' data-event="click mouseenter"
