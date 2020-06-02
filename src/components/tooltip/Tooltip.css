@@ -20,6 +20,8 @@ label, input, textarea {
     display: block;
     font-size: 13px;
     text-align: center;
+    border-color: black;
+    border-width: 1px;
     border-radius: .3rem;
     margin: .4rem auto;
     width: 170px;
@@ -35,4 +37,5 @@ label {
     max-width: 250px;
     word-break: break-word;
     z-index: 2;
+    background-color: #dbe1fd;
 }

@@ -27,8 +27,8 @@ function TodoBadge(props: TodoBadgeType) {
       style: cursor_css,
     };
     const rect_attr = {
-      x: circle_location(props.x)-6,
-      y: circle_location(props.y)-6,
+      x: circle_location(props.x) - 6,
+      y: circle_location(props.y) - 6,
       strokeWidth: "2.5",
       width: "12",
       height: "12",
@@ -67,8 +67,8 @@ function TodoBadge(props: TodoBadgeType) {
       case TodoType.Plan: {
         const attr = {fill: "#282c34", stroke: "white", strokeDasharray: "10px 10px"};
         return <circle data-tip={JSON.stringify(dataTip)} data-for='tooltip' data-event="click mouseenter"
-                       // TODO: Plan double click
-                       // onDoubleClick={() => dispatch({type: "SUCCESS", id: [props.y_index, props.x_index]})}
+          // TODO: Plan double click
+          // onDoubleClick={() => dispatch({type: "SUCCESS", id: [props.y_index, props.x_index]})}
                        {...attr} {...circle_attr}/>
       }
       case TodoType.Normal:

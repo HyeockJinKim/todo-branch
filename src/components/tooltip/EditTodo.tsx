@@ -23,9 +23,9 @@ function EditTodo(props: NewTodoProps) {
       header = 'temp header';
     }
     if (props.tooltipType === BranchTooltip.NewTodo)
-      dispatch({type: "CREATE-TODO", branch: y, header, text, typ, start_date: new Date(), end_date: date})
+      dispatch({type: "CREATE-TODO", branch: y, header, text, typ, start_date: new Date(), end_date: date});
     else
-      dispatch({type: "EDIT-TODO", x, y, header, text, typ, start_date: new Date(), end_date: date})
+      dispatch({type: "EDIT-TODO", x, y, header, text, typ, start_date: new Date(), end_date: date});
 
     setHeader(null);
     setText('');
@@ -74,13 +74,13 @@ function EditTodo(props: NewTodoProps) {
         타입
         <svg style={{display: "block", margin: "3px auto", cursor: "pointer"}} width="120"
              height="20">
-          <circle cx="10" cy="10" r="9" stroke="black" strokeWidth="1" fill="white"
+          <circle cx="10" cy="10" r="9" stroke={typ === TodoType.Normal ? "black" : "white"} strokeWidth="1" fill="white"
                   onClick={() => setType(TodoType.Normal)}/>
-          <circle cx="40" cy="10" r="9" stroke="black" strokeWidth="1" fill="yellow"
+          <circle cx="40" cy="10" r="9" stroke={typ === TodoType.Warning ? "black" : "white"} strokeWidth="1" fill="yellow"
                   onClick={() => setType(TodoType.Warning)}/>
-          <circle cx="70" cy="10" r="9" stroke="black" strokeWidth="1" fill="orange"
+          <circle cx="70" cy="10" r="9" stroke={typ === TodoType.Important ? "black" : "white"} strokeWidth="1" fill="orange"
                   onClick={() => setType(TodoType.Important)}/>
-          <circle cx="100" cy="10" r="9" stroke="black" strokeWidth="1" fill="red"
+          <circle cx="100" cy="10" r="9" stroke={typ === TodoType.MUST ? "black" : "white"} strokeWidth="1" fill="red"
                   onClick={() => setType(TodoType.MUST)}/>
         </svg>
       </label>

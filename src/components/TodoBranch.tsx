@@ -50,8 +50,8 @@ function TodoBranch() {
 
       <div className="box">
         <svg style={{
-          width: todoBranch.global_x * 50 + 400,
-          height: todoBranch.branches.length * 50 + 800,
+          width: todoBranch.global_x * 50 + 500,
+          height: todoBranch.branches.length * 50 + 400,
           margin: '2em 10%'
         }}>
           <TodoLineList/>
