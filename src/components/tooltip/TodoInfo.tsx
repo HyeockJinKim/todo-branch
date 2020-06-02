@@ -45,7 +45,7 @@ function TodoInfo(props: BranchChoiceProps) {
   return (
     <div>
       <h3>{header}</h3>
-      <span>{text}</span><br/>
+      {text.split('\n').map(line => <span>{line}<br/></span>)}
       <label>
         시작일
         <span
