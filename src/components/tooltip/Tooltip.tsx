@@ -31,7 +31,6 @@ function ToolTip() {
   const branchTooltip = useRef(null);
   const [tooltipType, setTooltip] = useState(BranchTooltip.BranchTooltip);
   useOutsideAlerter(branchTooltip, setTooltip);
-  console.log();
   useEffect(() => {
     ReactTooltip.rebuild();
   });

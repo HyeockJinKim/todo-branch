@@ -1,5 +1,5 @@
 import React from 'react';
-import {BranchTooltip, useBranchState} from "../../context/Todo.context";
+import {BranchTooltip, TodoType, useBranchState, useTodoDispatch} from "../../context/Todo.context";
 import './Tooltip.css'
 
 type BranchChoiceProps = {
@@ -16,11 +16,13 @@ const date_to_string = (d: Date) => {
 
 function TodoInfo(props: BranchChoiceProps) {
   const branches = useBranchState();
+  const dispatch = useTodoDispatch();
 
   let header = '';
   let text = '';
   let start_date = '';
   let end_date = '';
+  let can_remove = true;
   if (props.dataTip !== null) {
     const tip = JSON.parse(props.dataTip);
     if (tip.y < branches.length && tip.x < branches[tip.y].todo.length) {
@@ -29,7 +31,15 @@ function TodoInfo(props: BranchChoiceProps) {
       text = todo.text;
       start_date = todo.start_date !== null ? date_to_string(todo.start_date) : '~';
       end_date = todo.end_date !== null ? date_to_string(todo.end_date) : '~';
+      can_remove = todo.type !== TodoType.Initial && todo.type !== TodoType.Merge;
     }
+  }
+  const onRemove = () => {
+    if (props.dataTip !== null) {
+      const tip = JSON.parse(props.dataTip);
+      dispatch({type: "REMOVE", y: tip.y, x: tip.x})
+    }
+    props.setTooltip(BranchTooltip.None);
   }
 
   return (
@@ -46,6 +56,7 @@ function TodoInfo(props: BranchChoiceProps) {
         <span style={{display: "block", textAlign: "center", fontWeight: "normal"}}>{end_date}</span>
       </label>
       <span className="btn" onClick={() => props.setTooltip(BranchTooltip.EditTodo)}>edit</span>
+      {can_remove ? <span className="btn" onClick={() => onRemove()}>remove</span> : <div/>}
     </div>
   )
 }

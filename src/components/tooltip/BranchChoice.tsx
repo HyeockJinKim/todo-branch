@@ -19,12 +19,23 @@ function BranchChoice(props: BranchChoiceProps) {
     });
     props.setTooltip(BranchTooltip.None);
   };
+  const onRemove = () => {
+    if (props.dataTip !== null) {
+      const tip = JSON.parse(props.dataTip);
+      dispatch({type: "REMOVE-BRANCH", y: tip.y})
+    }
+    props.setTooltip(BranchTooltip.None);
+  }
+  let can_remove = true;
   let name = '';
   let index = 0;
   if (props.dataTip !== null) {
     let tip = JSON.parse(props.dataTip);
-    name = branches[tip.y].name;
-    index = tip.y;
+    if (tip.y < branches.length) {
+      name = branches[tip.y].name;
+      index = tip.y;
+      can_remove = index !== 0;
+    }
   }
   return (
     <div>
@@ -33,6 +44,7 @@ function BranchChoice(props: BranchChoiceProps) {
       <span className="btn" onClick={() => props.setTooltip(BranchTooltip.NewBranch)}>new branch</span>
       <span className="btn" onClick={e => onMerge(e, index)}>merge</span>
       <span className="btn" onClick={() => props.setTooltip(BranchTooltip.EditBranch)}>Edit</span>
+      {can_remove ? <span className="btn" onClick={() => onRemove()}>remove</span> : <div/>}
     </div>
   );
 }

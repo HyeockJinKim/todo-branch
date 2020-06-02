@@ -64,7 +64,9 @@ type Action =
   | { type: 'EDIT-BRANCH'; index: number, name: string }
   | { type: 'MERGE'; branch: number }
   | { type: 'UNDO'; }
-  | { type: 'REDO'; };
+  | { type: 'REDO'; }
+  | { type: 'REMOVE'; y: number, x: number }
+  | { type: 'REMOVE-BRANCH'; y: number };
 
 type TodoDispatch = Dispatch<Action>;
 const TodoDispatchContext = createContext<TodoDispatch | undefined>(
@@ -189,6 +191,25 @@ function todoReducer(state: TodoState, action: Action): TodoState {
       const redo_state = states[0];
       state.branches = redo_state.branches;
       state.global_x = redo_state.global_x;
+      window.localStorage.setItem('TodoBranch', JSON.stringify(state));
+      return {...state};
+    }
+    case "REMOVE": {
+      let target = state.branches[action.y].todo[action.x];
+      if (target.type === TodoType.Merge || target.type === TodoType.Initial)
+        return state;
+      history_save(state);
+      if (target.x+1 === state.global_x)
+        state.global_x--;
+      state.branches[action.y].todo.splice(action.x, 1);
+      window.localStorage.setItem('TodoBranch', JSON.stringify(state));
+      return {...state};
+    }
+    case "REMOVE-BRANCH": {
+      if (action.y === 0)
+        return state;
+      history_save(state);
+      state.branches.splice(action.y, 1);
       window.localStorage.setItem('TodoBranch', JSON.stringify(state));
       return {...state};
     }
