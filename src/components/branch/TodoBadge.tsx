@@ -12,12 +12,16 @@ type TodoBadgeType = {
 
 function TodoBadge(props: TodoBadgeType) {
   const dispatch = useTodoDispatch();
-  const badge_location = (x: number) => x * 50 + 25;
+  const badge_location = (x: number) => x * 50 + 35;
   const branches = useBranchState();
   const cursor_css = {cursor: 'pointer'};
   useEffect(() => {
     ReactTooltip.rebuild();
   });
+  const onWIP = (e: React.MouseEvent) => {
+    e.preventDefault();
+    dispatch({type: "WIP", y: props.y_index, x: props.x_index});
+  }
 
   const badge_type = (todo: Todo) => {
     const x_loc = badge_location(props.x);
@@ -26,9 +30,23 @@ function TodoBadge(props: TodoBadgeType) {
       cx: x_loc,
       cy: y_loc,
       strokeWidth: "2.5",
-      r: "7",
+      r: 7,
       style: cursor_css,
     };
+    if (todo.end_date !== null && !todo.success) {
+      let remain: number = new Date(todo.end_date).valueOf() - new Date().valueOf();
+      const _day = 1000 * 60 * 60 * 24;
+      const remainDay = remain / _day;
+      if (remainDay < 1) {
+        circle_attr.r = 15;
+        circle_attr.strokeWidth = "4";
+      } else if (remainDay < 2) {
+        circle_attr.r = 11;
+        circle_attr.strokeWidth = "3";
+      } else if (remainDay < 3) {
+        circle_attr.r = 9;
+      }
+    }
     const rect_attr = {
       x: x_loc - 6,
       y: y_loc - 6,
@@ -49,6 +67,7 @@ function TodoBadge(props: TodoBadgeType) {
         // return <polygon data-tip={JSON.stringify(dataTip)} data-for='tooltip' data-event="click mouseenter"
         //                 {...attr} {...triangle_attr} />
         return <rect data-tip={JSON.stringify(dataTip)} data-for='tooltip' data-event="click mouseenter"
+                     onContextMenu={e => e.preventDefault()}
                      {...attr} {...rect_attr}/>
       }
       case TodoType.Merge: {
@@ -56,27 +75,28 @@ function TodoBadge(props: TodoBadgeType) {
         // return <polygon data-tip={JSON.stringify(dataTip)} data-for='tooltip' data-event="click mouseenter"
         //                 {...attr} {...triangle_attr} />
         return <rect data-tip={JSON.stringify(dataTip)} data-for='tooltip' data-event="click mouseenter"
+                     onContextMenu={e => e.preventDefault()}
                      {...attr} {...rect_attr}/>
       }
       case TodoType.MUST: {
         const attr = {fill: todo.success ? "red" : "#282c34", stroke: "red"};
         return <circle data-tip={JSON.stringify(dataTip)} data-for='tooltip' data-event="click mouseenter"
                        onDoubleClick={() => dispatch({type: "SUCCESS", id: [props.y_index, props.x_index]})}
-                       onContextMenu={() => dispatch({type: "WIP", y: props.y_index, x: props.x_index})}
+                       onContextMenu={(e) => onWIP(e)}
                        {...attr} {...circle_attr}/>
       }
       case TodoType.Important: {
         const attr = {fill: todo.success ? "orange" : "#282c34", stroke: "orange"};
         return <circle data-tip={JSON.stringify(dataTip)} data-for='tooltip' data-event="click mouseenter"
                        onDoubleClick={() => dispatch({type: "SUCCESS", id: [props.y_index, props.x_index]})}
-                       onContextMenu={() => dispatch({type: "WIP", y: props.y_index, x: props.x_index})}
+                       onContextMenu={(e) => onWIP(e)}
                        {...attr} {...circle_attr}/>
       }
       case TodoType.Warning: {
         const attr = {fill: todo.success ? "yellow" : "#282c34", stroke: "yellow"};
         return <circle data-tip={JSON.stringify(dataTip)} data-for='tooltip' data-event="click mouseenter"
                        onDoubleClick={() => dispatch({type: "SUCCESS", id: [props.y_index, props.x_index]})}
-                       onContextMenu={() => dispatch({type: "WIP", y: props.y_index, x: props.x_index})}
+                       onContextMenu={(e) => onWIP(e)}
                        {...attr} {...circle_attr}/>
       }
       case TodoType.Plan: {
@@ -84,7 +104,7 @@ function TodoBadge(props: TodoBadgeType) {
         return <circle data-tip={JSON.stringify(dataTip)} data-for='tooltip' data-event="click mouseenter"
           // TODO: Plan double click
           // onDoubleClick={() => dispatch({type: "SUCCESS", id: [props.y_index, props.x_index]})}
-          //              onContextMenu={() => dispatch({type: "WIP", y: props.y_index, x: props.x_index})}
+          //              onContextMenu={(e) => onWIP(e)}
                        {...attr} {...circle_attr}/>
       }
       case TodoType.Normal:
@@ -92,7 +112,7 @@ function TodoBadge(props: TodoBadgeType) {
         const attr = {fill: todo.success ? "white" : "#282c34", stroke: "white"};
         return <circle data-tip={JSON.stringify(dataTip)} data-for='tooltip' data-event="click mouseenter"
                        onDoubleClick={() => dispatch({type: "SUCCESS", id: [props.y_index, props.x_index]})}
-                       onContextMenu={() => dispatch({type: "WIP", y: props.y_index, x: props.x_index})}
+                       onContextMenu={(e) => onWIP(e)}
                        {...attr} {...circle_attr}/>
       }
     }
@@ -107,6 +127,21 @@ function TodoBadge(props: TodoBadgeType) {
       strokeWidth: "2",
       style: cursor_css,
     }
+    if (props.todo.end_date !== null) {
+      let remain: number = new Date(props.todo.end_date).valueOf() - new Date().valueOf();
+      const _day = 1000 * 60 * 60 * 24;
+      const remainDay = remain / _day;
+      if (remainDay < 1) {
+        inverted_triangle_attr.points = (x_loc) + "," + (y_loc - 20) + " " + (x_loc - 7) + "," + (y_loc - 32) + " " + (x_loc + 7) + "," + (y_loc - 32);
+      } else if (remainDay < 2) {
+        inverted_triangle_attr.points = (x_loc) + "," + (y_loc - 16) + " " + (x_loc - 7) + "," + (y_loc - 28) + " " + (x_loc + 7) + "," + (y_loc - 28);
+      } else if (remainDay < 3) {
+        inverted_triangle_attr.points = (x_loc) + "," + (y_loc - 14) + " " + (x_loc - 7) + "," + (y_loc - 26) + " " + (x_loc + 7) + "," + (y_loc - 26);
+      }
+
+    }
+
+
     return (
       <g>
         <polygon {...attr} {...inverted_triangle_attr} />
@@ -115,14 +150,13 @@ function TodoBadge(props: TodoBadgeType) {
     )
   }
 
-  if (props.todo.WIP && !props.todo.success) {
+  if (props.todo.WIP && !props.todo.success)
     return invert_triangle("black");
-  }
 
   if (props.todo.end_date !== null && !props.todo.success) {
     let remain: number = new Date(props.todo.end_date).valueOf() - new Date().valueOf();
     const _day = 1000 * 60 * 60 * 24;
-    if (remain / _day <= 2) {
+    if (remain / _day < 3) {
       return invert_triangle("red");
     }
   }

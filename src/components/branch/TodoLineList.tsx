@@ -3,7 +3,7 @@ import {BranchTooltip, useTodoBranchState} from "../../context/Todo.context";
 import ReactTooltip from "react-tooltip";
 
 function TodoLineList() {
-  const line_location = (x: number) => x * 50 + 25;
+  const line_location = (x: number) => x * 50 + 35;
   const cursor_css = {cursor: 'pointer'};
   const todoBranch = useTodoBranchState();
   useEffect(() => {
